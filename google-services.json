@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "861135800563",
+    "project_id": "bikesapp-9a931",
+    "storage_bucket": "bikesapp-9a931.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:861135800563:android:f70373929a804063874f86",
+        "android_client_info": {
+          "package_name": "com.zero94.BikesApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "861135800563-l6fmii5v83rfdp9osmi19tvmu0pc5v2k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zero94.BikesApp",
+            "certificate_hash": "a62a2537e62901b896276fcd5d5cc2ef5a46076e"
+          }
+        },
+        {
+          "client_id": "861135800563-s4rb19mhk07vilb4r2m1inlm370bu0st.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zero94.BikesApp",
+            "certificate_hash": "4e0387bd42f7e993f3bfc0e9599e8ab0f4c7444c"
+          }
+        },
+        {
+          "client_id": "861135800563-sqblabqglrqcvlg5h3cblmn71ob2a10o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDN8GwUfclRbWSZMrK-PJC98Cuw6WHVLw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "861135800563-sqblabqglrqcvlg5h3cblmn71ob2a10o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "861135800563-8dnl6ekpipu7dijkt866k807fp2e1dnr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bikesapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

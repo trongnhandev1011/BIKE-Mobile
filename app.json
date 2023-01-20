@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "BikesApp",
+    "slug": "BikesApp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "googleServicesFile": "./google-services.json",
+      "package": "com.zero94.BikesApp"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "82b1ef9e-fb16-47e5-94f3-a1550bffdf13"
+      },
+      "USER_STORAGE": "user",
+      "TOKEN_KEY": "token",
+      "BACKEND_ENDPOINT": "https://efca3414-9ec6-4a5a-9842-933b55580cb1.mock.pstmn.io"
+    }
+  }
+}
