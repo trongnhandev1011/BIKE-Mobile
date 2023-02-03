@@ -1,7 +1,13 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import Constants from "expo-constants";
+import * as SecureStore from "expo-secure-store";
+import StoreKeyConstants from "../../constants/StoreKeyConstants";
+import { logout } from "../../redux/authentication/authentication.action";
+import { useAppDispatch } from "../../redux/store";
+import { refreshTokenAPI } from "./AuthController";
 
 const DEFAULT_BASE_URL = Constants!.expoConfig!.extra!.BACKEND_ENDPOINT;
+let isRefreshing = false;
 
 const axiosClient = axios.create({
   baseURL: DEFAULT_BASE_URL,
@@ -36,8 +42,12 @@ axiosClient.interceptors.response.use(
     // Do something with response error
     if (error?.response?.status === 401) {
       delete axiosClient.defaults.headers.common.Authorization;
+      // const dispatch = useAppDispatch();
+      // refreshToken(error, () => {
+      //   delete axiosClient.defaults.headers.common.Authorization;
+      //   dispatch(logout());
+      // });
     }
-
     return Promise.reject(error);
   }
 );
@@ -47,6 +57,39 @@ export const setAuthToken = (token?: string) => {
     axiosClient.defaults.headers.common.Authorization = `Bearer ${token}`;
   } else {
     delete axiosClient.defaults.headers.common.Authorization;
+  }
+};
+
+// hàm để refresh token
+const refreshToken = async (error: AxiosError, logout: Function) => {
+  const originConfig = error.config;
+  const refreshToken = await SecureStore.getItemAsync(
+    StoreKeyConstants.REFRESH_TOKEN
+  );
+  if (!refreshToken) {
+    logout();
+    return;
+  }
+  try {
+    const {
+      data: { data },
+    } = await refreshTokenAPI(refreshToken);
+    await SecureStore.setItemAsync(
+      StoreKeyConstants.TOKEN as string,
+      data.token
+    );
+    await SecureStore.setItemAsync(
+      StoreKeyConstants.REFRESH_TOKEN as string,
+      data.refreshToken
+    );
+    setAuthToken(data.token);
+    //retry
+    const retry = await axiosClient(error?.config as AxiosRequestConfig);
+    console.log({ test: retry });
+    return retry;
+  } catch (error) {
+    logout();
+    return;
   }
 };
 

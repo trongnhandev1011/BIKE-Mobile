@@ -1,19 +1,24 @@
 import * as React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../../../screens/HomeScreen/HomeScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MyTripListScreen } from "../../../screens/MyTripListScreen";
 import { ActivityScreen } from "../../../screens/ActivityScreen";
 import { MyAccountScreen } from "../../../screens/MyAccountScreen";
+import { HomeStacks } from "../../StackNavigators/HomeStacks";
 
 const Tab = createBottomTabNavigator();
 
 const UserTabs: React.FC<{}> = () => {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        unmountOnBlur: true,
+      }}
+    >
       <Tab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="HomeStacks"
+        component={HomeStacks}
         options={{
           title: "Home",
           tabBarIcon: ({ color, size }) => (

@@ -35,7 +35,7 @@
       },
       "USER_STORAGE": "user",
       "TOKEN_KEY": "token",
-      "BACKEND_ENDPOINT": "https://efca3414-9ec6-4a5a-9842-933b55580cb1.mock.pstmn.io"
+      "BACKEND_ENDPOINT": "http://192.168.1.112:8000"
     }
   }
 }

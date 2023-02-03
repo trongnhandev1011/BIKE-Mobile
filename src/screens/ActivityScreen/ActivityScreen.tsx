@@ -5,7 +5,7 @@ export type ActivityScreenProps = {};
 
 export default function ActivityScreen() {
   return (
-    <Center h="100%" w="100%">
+    <Center h="full" w="full">
       <Text>Activity Screen</Text>
     </Center>
   );

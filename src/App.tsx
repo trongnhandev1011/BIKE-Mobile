@@ -13,24 +13,28 @@ import UserTabs from "./routes/TabNavigators/UserTabs/UserTabs";
 import LoginScreen from "./screens/LoginScreen/LoginScreen";
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import { User } from "./types";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 export type Props = {};
+
+const queryClient = new QueryClient();
 
 const App: React.FC<Props> = () => {
   return (
     <NativeBaseProvider>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <Provider store={store}>
-          <NotificationProvider>
-            <NavigationContainer>
-              <AuthProvider
-                unAuthComponent={(user) => <LoginScreen />}
-                authComponent={(user) => <UserTabs />}
-              />
-            </NavigationContainer>
-          </NotificationProvider>
-        </Provider>
+        <QueryClientProvider client={queryClient}>
+          <Provider store={store}>
+            <NotificationProvider>
+              <NavigationContainer>
+                <AuthProvider
+                  unAuthComponent={(user) => <LoginScreen />}
+                  authComponent={(user) => <UserTabs />}
+                />
+              </NavigationContainer>
+            </NotificationProvider>
+          </Provider>
+        </QueryClientProvider>
       </SafeAreaProvider>
     </NativeBaseProvider>
   );
