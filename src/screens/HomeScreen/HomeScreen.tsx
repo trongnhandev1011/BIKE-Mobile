@@ -1,120 +1,84 @@
 import { useNavigation } from "@react-navigation/native";
-import {
-  Avatar,
-  Box,
-  Center,
-  Flex,
-  Image,
-  Button,
-  ScrollView,
-} from "native-base";
-import React, { useState } from "react";
-import { useContext } from "react";
-import { Pressable, Text, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import useAuth from "../../hooks/useAuth";
+import { Box, ScrollView, Text, Flex } from "native-base";
+import React from "react";
+import { HomeHeaderContainer } from "../../containers/HomeHeader";
+import { CardActionComponent } from "../../components/CardAction";
+import { TripCardComponent, TripCardSkeleton } from "../../components/TripCard";
+import { useQuery } from "react-query";
+import { getCurrentTripAPI } from "../../services/backend/TripsController";
+import moment from "moment";
+import { Trip } from "../../services/backend/TripsController/type";
 
 export type HomeScreenProps = {};
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
-  const {
-    action: { logout },
-  } = useAuth();
   const navigation = useNavigation();
 
   return (
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      style={{ paddingHorizontal: 20 }}
-    >
-      <Flex
-        direction="row"
-        justifyContent={"space-between"}
-        style={{
-          backgroundColor: "white",
-          marginTop: 14,
-          paddingHorizontal: 12,
-          paddingVertical: 10,
-          borderRadius: 50,
-        }}
-      >
-        <Flex direction="row">
-          <Avatar
-            size={50}
-            source={{
-              uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }} px="3" py="10">
+      <HomeHeaderContainer />
+      <Box mt="5">
+        <CurrentTrip />
+      </Box>
+      <Box mt="5">
+        <Text>What do you want to do now?</Text>
+        <Flex direction="row" justifyContent="space-around" mt="3">
+          <CardActionComponent
+            image={{
+              url: "https://images.unsplash.com/photo-1554672408-730436b60dde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=726&q=80",
             }}
-          ></Avatar>
-          <Flex justifyContent={"center"} style={{ marginLeft: 14 }}>
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-              Welcome back!
-            </Text>
-            <Text style={{ fontSize: 12 }}>Hope you have a great day!</Text>
-          </Flex>
-        </Flex>
-        <Center w="44">
-          <Pressable onPress={() => logout()}>
-            <MaterialCommunityIcons name="logout" size={24} color="black" />
-          </Pressable>
-        </Center>
-      </Flex>
-      <Center marginTop={3}>
-        <Flex direction="row">
-          <Button
-            w={"100%"}
-            colorScheme="indigo"
-            borderRadius={50}
-            onPress={() =>
-              navigation.navigate("UserRequestListScreen" as never)
-            }
-          >
-            My requested trip
-          </Button>
-        </Flex>
-      </Center>
-      <Flex
-        marginTop={3}
-        borderRadius="10"
-        alignItems="center"
-        justifyContent="center"
-        backgroundColor="white"
-      >
-        <Flex justifyContent={"center"} alignItems="center">
-          <Text style={{ fontSize: 18, textAlign: "center", lineHeight: 26 }}>
-            Need to go somewhere from
-          </Text>
-          <Text
-            style={{
-              fontSize: 18,
-              textAlign: "center",
-              fontWeight: "bold",
-              lineHeight: 26,
-            }}
-          >
-            FPT University?
-          </Text>
-        </Flex>
-        <Center h="58%" my={3}>
-          <Image
-            size={200}
-            borderRadius={100}
-            source={{
-              uri: "https://wallpaperaccess.com/full/317501.jpg",
-            }}
-            alt="Alternate Text"
+            title="Create a Post"
+            onPress={() => navigation.navigate("CreatePost" as never)}
           />
-        </Center>
-        <Button
-          borderRadius={50}
-          w="80%"
-          colorScheme="indigo"
-          onPress={() => navigation.navigate("BikerRequestListScreen" as never)}
-        >
-          Check trip list
-        </Button>
-      </Flex>
+          <CardActionComponent
+            image={{
+              url: "https://images.unsplash.com/photo-1467008203540-c6dfa96e7bb9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1176&q=80",
+            }}
+            title="Pick a Request"
+            onPress={() => navigation.navigate("PickRequest" as never)}
+          />
+        </Flex>
+      </Box>
     </ScrollView>
   );
 };
+
+function CurrentTrip() {
+  const { isLoading, data, error } = useQuery("currentTrip", async () => {
+    return (await getCurrentTripAPI()).data;
+  });
+
+  console.log(error);
+  const mapperHandler = (data: Trip) => {
+    console.log(data);
+    return {
+      toLocation: data["to_location"].name,
+      fromLocation: data["from_location"].name,
+      startAt: moment(data["start_at"]).format("h:mm a - DD/MM/YYYY"),
+    };
+  };
+
+  //@ts-ignore
+  if (isLoading == false && (!data || error?.response?.status == 404))
+    return null;
+
+  return (
+    <Box>
+      <Text>Your current trip</Text>
+      <Box mt="2">
+        {isLoading ? (
+          <TripCardSkeleton />
+        ) : (
+          <TripCardComponent
+            onPress={() => {
+              //TODO: navigate to trip detail screen later
+            }}
+            tripData={mapperHandler(data.data)}
+          />
+        )}
+      </Box>
+    </Box>
+  );
+}
 
 export default HomeScreen;

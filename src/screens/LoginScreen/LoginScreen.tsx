@@ -25,6 +25,9 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
     ],
     responseType: "code",
     usePKCE: false,
+    extraParams: {
+      nonce: "test",
+    },
   });
 
   console.log(error);
@@ -39,7 +42,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
   }, [response]);
 
   return (
-    <Center w="100%" h="100%" backgroundColor="white">
+    <Center w="full" h="full" backgroundColor="white">
       <Box safeArea p="2" py="8" w="90%" maxW="290">
         <Heading
           size="lg"

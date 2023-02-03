@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { User } from "../../types";
-import { login, logout } from "./authentication.action";
+import { initializeAuth, login, logout } from "./authentication.action";
 
 export type AuthenticationState = {
   isAuthUser: boolean;
-  user: User | {};
+  user: User;
   dataFetched: boolean;
   isFetching: boolean;
   isError: boolean;
@@ -38,6 +38,27 @@ const authenticationSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(initializeAuth.pending, (state) => ({
+      ...state,
+      isFetching: true,
+      dataFetched: false,
+      error: false,
+    }));
+    builder.addCase(initializeAuth.fulfilled, (state, action) => ({
+      isAuthUser: true,
+      user: action.payload.user,
+      isFetching: false,
+      dataFetched: true,
+      error: false,
+    }));
+    builder.addCase(initializeAuth.rejected, (state, action) => ({
+      isAuthUser: false,
+      user: {},
+      isFetching: false,
+      dataFetched: true,
+      isError: true,
+      error: action.payload,
+    }));
     builder.addCase(login.fulfilled, (state, action) => ({
       isAuthUser: true,
       user: action.payload.user,
@@ -72,6 +93,6 @@ const authenticationSlice = createSlice({
   },
 });
 
-export const { setUser, initializeAuth } = authenticationSlice.actions;
+export const { setUser } = authenticationSlice.actions;
 
 export default authenticationSlice.reducer;

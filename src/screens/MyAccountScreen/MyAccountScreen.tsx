@@ -5,7 +5,7 @@ export type MyAccountScreenProps = {};
 
 export default function MyAccountScreen() {
   return (
-    <Center h="100%" w="100%">
+    <Center h="full" w="full">
       <Text>My Account Screen</Text>
     </Center>
   );

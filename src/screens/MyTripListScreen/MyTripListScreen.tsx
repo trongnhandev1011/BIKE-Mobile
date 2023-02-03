@@ -5,7 +5,7 @@ export type MyTripListScreenProps = {};
 
 export default function MyTripListScreen() {
   return (
-    <Center h="100%" w="100%">
+    <Center h="full" w="full">
       <Text>My Trip List Screen</Text>
     </Center>
   );
