@@ -2,10 +2,12 @@ import { PaginationResponse } from "../../../types/Response.type";
 import axiosClient from "../axiosClient";
 import { Station } from "./type";
 
-export const getAllStationsAPI = (page: number = 1, pageSize: number = 20) =>
-  axiosClient.get<PaginationResponse<Station>>("/stations", {
-    params: {
-      page: page,
-      pageSize: pageSize,
-    },
-  });
+export const getAllStationsAPI = (fromStationId?: number) =>
+  axiosClient.get<PaginationResponse<Station>>(
+    "http://52.74.214.224:8080/api/index/v1/stations",
+    {
+      params: {
+        fromStationId: fromStationId,
+      },
+    }
+  );

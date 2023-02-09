@@ -1,9 +1,10 @@
 const CreatePostFormRules = {
-  type: undefined,
-  fromLocation: { required: "Field is required" },
-  toLocation: { required: "Field is required" },
-  startAt: undefined,
-  note: undefined,
+  role: undefined,
+  startStationId: { required: "Field is required" },
+  endStationId: { required: "Field is required" },
+  startTime: undefined,
+  title: undefined,
+  description: undefined,
 };
 
 export default CreatePostFormRules;

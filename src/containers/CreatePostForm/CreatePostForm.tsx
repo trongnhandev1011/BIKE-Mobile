@@ -42,9 +42,9 @@ export default function CreatePostForm({
     formState: { errors },
   } = useForm();
   const onSubmit = (data: any) => {
-    console.log("submiting with ", data);
     //TODO: call API to submit
     const result = true;
+    console.log(data);
     handlePostSubmit && handlePostSubmit(result, data);
   };
 
@@ -75,15 +75,15 @@ export default function CreatePostForm({
             </Select>
           )}
           defaultValue={Object.keys(PostTypeConstant)[0]}
-          name="type"
-          rules={CreatePostFormRules.type}
+          name="role"
+          rules={CreatePostFormRules.role}
         />
       </Box>
       <Box mt="4" backgroundColor="white" p="4" pb="8" rounded="lg">
         <VStack space={2}>
           <FormItem
             isInvalid={!!errors["fromLocation"]}
-            name="fromLocation"
+            name="startStationId"
             label="From"
             control={control}
             render={({ field: { onChange, value } }) => (
@@ -102,11 +102,11 @@ export default function CreatePostForm({
                 ))}
               </Select>
             )}
-            rules={CreatePostFormRules.fromLocation}
+            rules={CreatePostFormRules.startStationId}
           />
           <FormItem
             isInvalid={!!errors["toLocation"]}
-            name="toLocation"
+            name="endStationId"
             label="To"
             control={control}
             render={({ field: { onChange, value } }) => (
@@ -125,10 +125,10 @@ export default function CreatePostForm({
                 ))}
               </Select>
             )}
-            rules={CreatePostFormRules.toLocation}
+            rules={CreatePostFormRules.endStationId}
           />
           <FormItem
-            name="startAt"
+            name="startTime"
             label="Start at"
             control={control}
             render={({ field: { onChange, value } }) => {
@@ -142,22 +142,37 @@ export default function CreatePostForm({
               );
             }}
             defaultValue={moment(Date.now()).utc()}
-            rules={CreatePostFormRules.startAt}
+            rules={CreatePostFormRules.startTime}
           />
           <FormItem
-            name="note"
-            label="Note"
+            name="title"
+            label="Title"
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
                 onBlur={onBlur}
-                placeholder="Write your note in here"
+                placeholder="Write your title in here"
                 onChangeText={(value) => onChange(value)}
                 value={value}
                 variant="underlined"
               />
             )}
-            rules={CreatePostFormRules.note}
+            rules={CreatePostFormRules.title}
+          />
+          <FormItem
+            name="description"
+            label="Description"
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                onBlur={onBlur}
+                placeholder="Write your description in here"
+                onChangeText={(value) => onChange(value)}
+                value={value}
+                variant="underlined"
+              />
+            )}
+            rules={CreatePostFormRules.description}
           />
           <Button mt="4" onPress={handleSubmit(onSubmit)} rounded="full">
             Submit

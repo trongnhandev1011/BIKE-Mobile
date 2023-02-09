@@ -3,6 +3,9 @@
     "name": "BikesApp",
     "slug": "BikesApp",
     "version": "1.0.0",
+    "currentFullName": "@zero94/BikesApp",
+    "originalFullName": "@zero94/BikesApp",
+    "projectNameForProxy": "@zero94/BikesApp",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,11 +15,13 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/82b1ef9e-fb16-47e5-94f3-a1550bffdf13"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "jsEngine": "hermes"
     },
     "android": {
       "adaptiveIcon": {
@@ -35,7 +40,10 @@
       },
       "USER_STORAGE": "user",
       "TOKEN_KEY": "token",
-      "BACKEND_ENDPOINT": "http://192.168.1.112:8000"
+      "BACKEND_ENDPOINT": "http://52.74.214.224:8080/api/v1"
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     }
   }
 }

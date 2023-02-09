@@ -1,9 +1,7 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 import StoreKeyConstants from "../../constants/StoreKeyConstants";
-import { logout } from "../../redux/authentication/authentication.action";
-import { useAppDispatch } from "../../redux/store";
 import { refreshTokenAPI } from "./AuthController";
 
 const DEFAULT_BASE_URL = Constants!.expoConfig!.extra!.BACKEND_ENDPOINT;
@@ -13,14 +11,16 @@ const axiosClient = axios.create({
   baseURL: DEFAULT_BASE_URL,
   headers: {
     "Content-Type": "application/json",
-    "x-mock-match-request-body": true,
-    "x-mock-match-request-headers": true,
   },
 });
 
 //set client base URL again
 axiosClient.interceptors.request.use(
-  function (config: AxiosRequestConfig) {
+  function (
+    config: InternalAxiosRequestConfig
+  ):
+    | InternalAxiosRequestConfig<any>
+    | Promise<InternalAxiosRequestConfig<any>> {
     // Do something before request is sent
 
     return config;
@@ -37,16 +37,22 @@ axiosClient.interceptors.response.use(
     // Do something with response data
     return response;
   },
-  function (error) {
+  async function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
+    const originalRequest = error.config;
     if (error?.response?.status === 401) {
-      delete axiosClient.defaults.headers.common.Authorization;
-      // const dispatch = useAppDispatch();
-      // refreshToken(error, () => {
-      //   delete axiosClient.defaults.headers.common.Authorization;
-      //   dispatch(logout());
-      // });
+      if (!originalRequest?.retry) {
+        originalRequest.retry = true;
+        const access_token = await refreshToken();
+        setAuthToken(access_token as string);
+        axiosClient.defaults.headers.common["Authorization"] =
+          "Bearer " + access_token;
+        originalRequest.headers["Authorization"] = "Bearer " + access_token;
+        return axios(originalRequest);
+      } else {
+        delete axiosClient.defaults.headers.common.Authorization;
+      }
     }
     return Promise.reject(error);
   }
@@ -61,14 +67,12 @@ export const setAuthToken = (token?: string) => {
 };
 
 // hàm để refresh token
-const refreshToken = async (error: AxiosError, logout: Function) => {
-  const originConfig = error.config;
+const refreshToken = async () => {
   const refreshToken = await SecureStore.getItemAsync(
     StoreKeyConstants.REFRESH_TOKEN
   );
   if (!refreshToken) {
-    logout();
-    return;
+    return null;
   }
   try {
     const {
@@ -83,13 +87,9 @@ const refreshToken = async (error: AxiosError, logout: Function) => {
       data.refreshToken
     );
     setAuthToken(data.token);
-    //retry
-    const retry = await axiosClient(error?.config as AxiosRequestConfig);
-    console.log({ test: retry });
-    return retry;
+    return data.token;
   } catch (error) {
-    logout();
-    return;
+    return null;
   }
 };
 
