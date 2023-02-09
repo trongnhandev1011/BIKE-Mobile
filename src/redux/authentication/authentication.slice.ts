@@ -45,6 +45,7 @@ const authenticationSlice = createSlice({
       error: false,
     }));
     builder.addCase(initializeAuth.fulfilled, (state, action) => ({
+      ...state,
       isAuthUser: true,
       user: action.payload.user,
       isFetching: false,
@@ -57,9 +58,10 @@ const authenticationSlice = createSlice({
       isFetching: false,
       dataFetched: true,
       isError: true,
-      error: action.payload,
+      error: !!action.payload,
     }));
     builder.addCase(login.fulfilled, (state, action) => ({
+      ...state,
       isAuthUser: true,
       user: action.payload.user,
       isFetching: false,

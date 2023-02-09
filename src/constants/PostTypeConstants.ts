@@ -1,8 +1,8 @@
 export const PostTypeConstant = {
-  BIKER: {
-    label: "Biker",
+  GRABBER: {
+    label: "Grabber",
   },
-  USER: {
-    label: "User",
+  PASSENGER: {
+    label: "Passenger",
   },
 };

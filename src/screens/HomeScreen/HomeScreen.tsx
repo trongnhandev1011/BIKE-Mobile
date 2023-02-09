@@ -48,9 +48,7 @@ function CurrentTrip() {
     return (await getCurrentTripAPI()).data;
   });
 
-  console.log(error);
   const mapperHandler = (data: Trip) => {
-    console.log(data);
     return {
       toLocation: data["to_location"].name,
       fromLocation: data["from_location"].name,

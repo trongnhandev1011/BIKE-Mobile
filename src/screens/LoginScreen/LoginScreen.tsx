@@ -15,7 +15,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
   } = useAuth();
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId:
-      "861135800563-ift2nj7qp73g9aril8q0ra7lb320c269.apps.googleusercontent.com",
+      "112402231809-sju8kah621nj78kgtjsc51aqk25ule4d.apps.googleusercontent.com",
     selectAccount: true,
     shouldAutoExchangeCode: false,
     scopes: [
@@ -30,14 +30,12 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
     },
   });
 
-  console.log(error);
-
   useEffect(() => {
     if (response?.type === "success") {
+      const { authentication, params } = response;
       console.log(response);
-      const { authentication } = response;
       //TODO: will get the auth code to send to the server later
-      login({ authCode: "test" });
+      login({ authCode: params.code });
     }
   }, [response]);
 
