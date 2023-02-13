@@ -9,21 +9,21 @@ import {
 } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getAllTripsAPI } from "../../services/backend/TripsController";
 import { useInfiniteQuery } from "react-query";
-import { TripCardComponent, TripCardSkeleton } from "../../components/TripCard";
+import { PostCardComponent, PostCardSkeleton } from "../../components/PostCard";
 import moment from "moment";
-import { SimpleTrip } from "../../services/backend/TripsController/type";
 import { useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import { FormItem } from "../../containers/FormItem";
 import { InfiniteList } from "../../components/InfiniteList";
-import { TripStatusConstants } from "../../constants/TripStatusConstants";
+import { getAllPostsAPI } from "../../services/backend/PostController";
+import { SimplePost } from "../../services/backend/PostController/type";
+import { UserRoleConstants } from "../../constants/UserRoleConstants";
 
-export type MyTripListScreenProps = {};
+export type MyPostListScreenProps = {};
 
 const defaultFilterValues = {
-  status: null,
+  role: null,
 };
 
 const FilterModalContext = createContext<{
@@ -38,23 +38,20 @@ const FilterModalContext = createContext<{
   onReset: () => {},
 });
 
-export default function MyTripListScreen() {
+export default function MyPostListScreen() {
   const navigation = useNavigation();
   const [isOpenModal, setOpenModal] = useState(false);
-  const [queryKey, setQueryKey] = useState({ status: undefined, query: "" });
+  const [queryKey, setQueryKey] = useState({ role: undefined, query: "" });
   const {
     isLoading,
-    data: tripData,
+    data: postData,
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery(
     [queryKey],
     async ({ pageParam = 1, queryKey }) => {
-      const { status, query } = queryKey?.[0] ?? {
-        status: undefined,
-        query: "",
-      };
-      const res = (await getAllTripsAPI(pageParam, 10, status, query)).data;
+      const { role, query } = queryKey?.[0] ?? { role: undefined, query: "" };
+      const res = (await getAllPostsAPI(pageParam, 10, role, query)).data;
       return res.data;
     },
     {
@@ -68,15 +65,15 @@ export default function MyTripListScreen() {
     }
   );
 
-  const mapperHandler = (data: SimpleTrip) => {
-    console.log(data);
+  const mapperHandler = (data: SimplePost) => {
     return {
       toLocation: data.startStation,
       fromLocation: data.endStation,
-      startAt: data.startAt
-        ? moment(data.startAt).format("h:mm a - DD/MM/YYYY")
+      startAt: data.startTime
+        ? moment(data.startTime).format("h:mm a - DD/MM/YYYY")
         : "",
       status: data.status,
+      role: data.role,
     };
   };
 
@@ -89,7 +86,7 @@ export default function MyTripListScreen() {
             setOpenModal(false);
             setQueryKey((preState) => ({
               ...preState,
-              status: data?.status === "ALL" ? undefined : data?.status,
+              role: data?.role === "ALL" ? undefined : data?.role,
             }));
           },
           onCancel: () => {
@@ -102,7 +99,7 @@ export default function MyTripListScreen() {
       >
         <FilterModal />
       </FilterModalContext.Provider>
-      <Box h="full" w="full" px="3" py="10">
+      <Box h="full" w="full" px="3" pt="5" pb="10">
         <HStack space={2} alignItems="center">
           <Input
             flex={1}
@@ -126,20 +123,20 @@ export default function MyTripListScreen() {
         </HStack>
         <Box my="4">
           <InfiniteList
-            data={tripData}
-            skeleton={() => <TripCardSkeleton />}
+            data={postData}
+            skeleton={() => <PostCardSkeleton />}
             hasNextPage={hasNextPage}
             fetchNextPage={fetchNextPage}
             isLoading={isLoading}
-            render={(trip) => (
-              <TripCardComponent
-                key={trip.id}
-                tripData={mapperHandler(trip)}
+            render={(post) => (
+              <PostCardComponent
+                key={post.id}
+                postData={mapperHandler(post)}
                 onPress={() => {
                   navigation.navigate(
-                    "TripDetail" as never,
+                    "PostDetailScreen" as never,
                     {
-                      tripId: trip.id,
+                      postId: post.id,
                     } as never
                   );
                 }}
@@ -169,7 +166,7 @@ function FilterModal() {
         <Modal.Header>Filter</Modal.Header>
         <Modal.Body>
           <FormItem
-            label="Status"
+            label="Role"
             control={control as any}
             render={({ field: { onChange, value } }) => (
               <Select
@@ -180,12 +177,13 @@ function FilterModal() {
                 onValueChange={onChange}
               >
                 <Select.Item label="All" value={"ALL"} key="ALL" />
-                {Object.entries(TripStatusConstants).map(([key, item]) => (
+                {Object.entries(UserRoleConstants).map(([key, item]) => (
                   <Select.Item label={item.label} value={key} key={key} />
                 ))}
               </Select>
             )}
-            name="status"
+            defaultValue="ALL"
+            name="role"
           />
         </Modal.Body>
         <Modal.Footer>
@@ -195,7 +193,7 @@ function FilterModal() {
               colorScheme="blueGray"
               onPress={() => {
                 reset();
-                onReset;
+                onReset();
               }}
             >
               Reset

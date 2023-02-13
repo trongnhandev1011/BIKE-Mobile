@@ -10,6 +10,8 @@ import { PostTypeConstant } from "../../constants/PostTypeConstants";
 import { AppLoading } from "../../components/AppLoading";
 import CreatePostFormRules from "./CreatePostForm.rules";
 import { FormItem } from "../FormItem";
+import { CreatePost } from "../../services/backend/PostController/type";
+import { createPostAPI } from "../../services/backend/PostController";
 
 const defaultFormStyle: {
   fontSize: string;
@@ -41,10 +43,17 @@ export default function CreatePostForm({
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: CreatePost | any) => {
     //TODO: call API to submit
-    const result = true;
-    console.log(data);
+    let result = false;
+    try {
+      const res = (await createPostAPI(data)).data;
+      if (res.code === 0) result = true;
+      console.log(res.data);
+    } catch (e) {
+      console.log(e);
+      //ignore
+    }
     handlePostSubmit && handlePostSubmit(result, data);
   };
 
@@ -70,7 +79,11 @@ export default function CreatePostForm({
               }
             >
               {Object.entries(PostTypeConstant).map(([key, item]) => (
-                <Select.Item label={item.label} value={key} key={key} />
+                <Select.Item
+                  label={`I'm a ${item.label}`}
+                  value={key}
+                  key={key}
+                />
               ))}
             </Select>
           )}
@@ -143,21 +156,6 @@ export default function CreatePostForm({
             }}
             defaultValue={moment(Date.now()).utc()}
             rules={CreatePostFormRules.startTime}
-          />
-          <FormItem
-            name="title"
-            label="Title"
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                onBlur={onBlur}
-                placeholder="Write your title in here"
-                onChangeText={(value) => onChange(value)}
-                value={value}
-                variant="underlined"
-              />
-            )}
-            rules={CreatePostFormRules.title}
           />
           <FormItem
             name="description"

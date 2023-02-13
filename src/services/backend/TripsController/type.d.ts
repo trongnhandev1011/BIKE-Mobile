@@ -1,18 +1,29 @@
-export type Location = {
-  id: number;
+import { SimplePost } from "../PostController/type";
+import { Station } from "../StationsController/type";
+
+export type User = {
+  id: string;
+  avatar: string;
+  card: string;
   name: string;
-  address: string;
+  email: string;
+  phone: string;
+  averagePoint: number;
+  status: "ACTIVE" | "INACTIVE";
 };
 
-export type Trip = {
-  from_location: Location;
-  to_location: Location;
-  partner: {
-    type: string;
-    email: string;
-    name: string;
-    phone_number: string;
-  };
-  start_at: string;
+export type SimpleTrip = {
+  id: number;
   status: string;
+  description: string;
+  createdAt: string;
+  startAt: string;
+  finishAt: string;
+  cancelAt: string;
+  feedbackPoint: number;
+  feedbackContent: string;
+  startStationId: number;
+  startStation: string;
+  endStationId: number;
+  endStation: string;
 };

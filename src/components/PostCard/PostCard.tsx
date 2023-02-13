@@ -3,13 +3,20 @@ import { Pressable } from "react-native";
 import { Avatar, Box, Flex, Text, TextArea } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { SimpleTrip } from "../../services/backend/TripsController/type";
+import { SimplePost } from "../../services/backend/PostController/type";
 
 export type Props = {
-  tripData: any;
+  postData: {
+    fromLocation: string;
+    toLocation: string;
+    startAt: string;
+    role: string;
+    status: string;
+  };
   onPress: Function;
 };
 
-const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
+const PostCard: React.FC<Props> = ({ postData, onPress }) => {
   return (
     <Pressable onPress={() => onPress()}>
       <Box px="4" py="3.5" backgroundColor="white" w="full" rounded="lg">
@@ -17,7 +24,7 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
           <Box>
             <Avatar backgroundColor={"indigo.500"}>
               <MaterialCommunityIcons
-                name="motorbike"
+                name="file-document"
                 size={24}
                 color="white"
               />
@@ -25,17 +32,20 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
           </Box>
           <Box marginLeft={4}>
             <Text fontSize="md">
-              <Text fontWeight="semibold">From:</Text> {tripData?.fromLocation}
+              <Text fontWeight="semibold">From:</Text> {postData?.fromLocation}
             </Text>
             <Text fontSize="md">
-              <Text fontWeight="semibold">To:</Text> {tripData?.toLocation}
+              <Text fontWeight="semibold">To:</Text> {postData?.toLocation}
             </Text>
             <Text fontSize="md">
-              <Text fontWeight="semibold">Start at:</Text> {tripData?.startAt}
+              <Text fontWeight="semibold">Start at:</Text> {postData?.startAt}
             </Text>
-            {tripData?.status ? (
+            <Text fontSize="md">
+              <Text fontWeight="semibold">Role:</Text> {postData?.role}
+            </Text>
+            {postData?.status ? (
               <Text fontSize="md">
-                <Text fontWeight="semibold">Status:</Text> {tripData?.status}
+                <Text fontWeight="semibold">Status:</Text> {postData?.status}
               </Text>
             ) : null}
           </Box>
@@ -45,4 +55,4 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
   );
 };
 
-export default TripRequestCard;
+export default PostCard;

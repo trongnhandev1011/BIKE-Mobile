@@ -2,14 +2,19 @@ import React, { useContext } from "react";
 import { Pressable } from "react-native";
 import { Avatar, Box, Flex, Text, TextArea } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { SimpleTrip } from "../../services/backend/TripsController/type";
 
 export type Props = {
-  tripData: any;
+  applicationData: {
+    fromLocation: string;
+    toLocation: string;
+    startAt: string;
+    role: string;
+    status: string;
+  };
   onPress: Function;
 };
 
-const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
+const ApplicationCard: React.FC<Props> = ({ applicationData, onPress }) => {
   return (
     <Pressable onPress={() => onPress()}>
       <Box px="4" py="3.5" backgroundColor="white" w="full" rounded="lg">
@@ -17,7 +22,7 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
           <Box>
             <Avatar backgroundColor={"indigo.500"}>
               <MaterialCommunityIcons
-                name="motorbike"
+                name="file-document"
                 size={24}
                 color="white"
               />
@@ -25,19 +30,24 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
           </Box>
           <Box marginLeft={4}>
             <Text fontSize="md">
-              <Text fontWeight="semibold">From:</Text> {tripData?.fromLocation}
+              <Text fontWeight="semibold">From:</Text>{" "}
+              {applicationData?.fromLocation}
             </Text>
             <Text fontSize="md">
-              <Text fontWeight="semibold">To:</Text> {tripData?.toLocation}
+              <Text fontWeight="semibold">To:</Text>{" "}
+              {applicationData?.toLocation}
             </Text>
             <Text fontSize="md">
-              <Text fontWeight="semibold">Start at:</Text> {tripData?.startAt}
+              <Text fontWeight="semibold">Start at:</Text>{" "}
+              {applicationData?.startAt}
             </Text>
-            {tripData?.status ? (
-              <Text fontSize="md">
-                <Text fontWeight="semibold">Status:</Text> {tripData?.status}
-              </Text>
-            ) : null}
+            <Text fontSize="md">
+              <Text fontWeight="semibold">Role:</Text> {applicationData?.role}
+            </Text>
+            <Text fontSize="md">
+              <Text fontWeight="semibold">Status:</Text>{" "}
+              {applicationData?.status}
+            </Text>
           </Box>
         </Flex>
       </Box>
@@ -45,4 +55,4 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
   );
 };
 
-export default TripRequestCard;
+export default ApplicationCard;

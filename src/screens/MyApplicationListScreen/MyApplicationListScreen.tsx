@@ -9,21 +9,27 @@ import {
 } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getAllTripsAPI } from "../../services/backend/TripsController";
 import { useInfiniteQuery } from "react-query";
-import { TripCardComponent, TripCardSkeleton } from "../../components/TripCard";
+import { PostCardComponent, PostCardSkeleton } from "../../components/PostCard";
 import moment from "moment";
-import { SimpleTrip } from "../../services/backend/TripsController/type";
 import { useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import { FormItem } from "../../containers/FormItem";
 import { InfiniteList } from "../../components/InfiniteList";
-import { TripStatusConstants } from "../../constants/TripStatusConstants";
+import { getAllPostsAPI } from "../../services/backend/PostController";
+import { SimplePost } from "../../services/backend/PostController/type";
+import { UserRoleConstants } from "../../constants/UserRoleConstants";
+import { getAllApplicationsAPI } from "../../services/backend/ApplicationController";
+import {
+  ApplicationCardComponent,
+  ApplicationCardSkeleton,
+} from "../../components/ApplicationCard";
+import { SimpleApplication } from "../../services/backend/ApplicationController/type";
 
-export type MyTripListScreenProps = {};
+export type MyApplicationListScreenProps = {};
 
 const defaultFilterValues = {
-  status: null,
+  role: null,
 };
 
 const FilterModalContext = createContext<{
@@ -38,23 +44,22 @@ const FilterModalContext = createContext<{
   onReset: () => {},
 });
 
-export default function MyTripListScreen() {
+export default function MyApplicationListScreen() {
   const navigation = useNavigation();
+  const [searchInput, setSearchInput] = useState("");
   const [isOpenModal, setOpenModal] = useState(false);
-  const [queryKey, setQueryKey] = useState({ status: undefined, query: "" });
+  const [queryKey, setQueryKey] = useState({ role: undefined });
   const {
     isLoading,
-    data: tripData,
+    data: applicationData,
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery(
     [queryKey],
     async ({ pageParam = 1, queryKey }) => {
-      const { status, query } = queryKey?.[0] ?? {
-        status: undefined,
-        query: "",
-      };
-      const res = (await getAllTripsAPI(pageParam, 10, status, query)).data;
+      const { role } = queryKey?.[0] ?? { role: undefined };
+      const res = (await getAllApplicationsAPI(pageParam, 10)).data;
+      console.log(res);
       return res.data;
     },
     {
@@ -68,29 +73,29 @@ export default function MyTripListScreen() {
     }
   );
 
-  const mapperHandler = (data: SimpleTrip) => {
-    console.log(data);
+  const mapperHandler = (data: SimpleApplication) => {
     return {
       toLocation: data.startStation,
       fromLocation: data.endStation,
-      startAt: data.startAt
-        ? moment(data.startAt).format("h:mm a - DD/MM/YYYY")
+      startAt: data.startTime
+        ? moment(data.startTime).format("h:mm a - DD/MM/YYYY")
         : "",
-      status: data.status,
+      status: data.accepted ? "ACCEPTED" : "WAITING",
+      role: data.role,
     };
   };
 
   return (
     <>
-      <FilterModalContext.Provider
+      {/* TODO: might need to filter status later */}
+      {/* <FilterModalContext.Provider
         value={{
           isOpenModal,
           submitHandler: (data: any) => {
             setOpenModal(false);
-            setQueryKey((preState) => ({
-              ...preState,
-              status: data?.status === "ALL" ? undefined : data?.status,
-            }));
+            setQueryKey({
+              role: data?.role === "ALL" ? undefined : data?.role,
+            });
           },
           onCancel: () => {
             setOpenModal(false);
@@ -101,45 +106,40 @@ export default function MyTripListScreen() {
         }}
       >
         <FilterModal />
-      </FilterModalContext.Provider>
-      <Box h="full" w="full" px="3" py="10">
-        <HStack space={2} alignItems="center">
+      </FilterModalContext.Provider> */}
+      <Box h="full" w="full" px="3" pt="5" pb="10">
+        {/* <HStack space={2} alignItems="center">
           <Input
             flex={1}
-            value={queryKey.query}
+            value={searchInput}
             placeholder="Search"
             fontSize="lg"
             rounded="full"
             backgroundColor="white"
-            onChangeText={(value) =>
-              setQueryKey((preState) => ({
-                ...preState,
-                query: value,
-              }))
-            }
+            onChangeText={(value) => setSearchInput(value)}
           />
           <IconButton
             onPress={() => setOpenModal(true)}
             size="sm"
             icon={<MaterialIcons name="filter-alt" size={32} color="black" />}
           />
-        </HStack>
-        <Box my="4">
+        </HStack> */}
+        <Box mb="4">
           <InfiniteList
-            data={tripData}
-            skeleton={() => <TripCardSkeleton />}
+            data={applicationData}
+            skeleton={() => <ApplicationCardSkeleton />}
             hasNextPage={hasNextPage}
             fetchNextPage={fetchNextPage}
             isLoading={isLoading}
-            render={(trip) => (
-              <TripCardComponent
-                key={trip.id}
-                tripData={mapperHandler(trip)}
+            render={(application) => (
+              <ApplicationCardComponent
+                key={application.id}
+                applicationData={mapperHandler(application)}
                 onPress={() => {
                   navigation.navigate(
-                    "TripDetail" as never,
+                    "PostDetailScreen" as never,
                     {
-                      tripId: trip.id,
+                      postId: application.id,
                     } as never
                   );
                 }}
@@ -169,7 +169,7 @@ function FilterModal() {
         <Modal.Header>Filter</Modal.Header>
         <Modal.Body>
           <FormItem
-            label="Status"
+            label="Role"
             control={control as any}
             render={({ field: { onChange, value } }) => (
               <Select
@@ -179,13 +179,14 @@ function FilterModal() {
                 mt={1}
                 onValueChange={onChange}
               >
-                <Select.Item label="All" value={"ALL"} key="ALL" />
-                {Object.entries(TripStatusConstants).map(([key, item]) => (
-                  <Select.Item label={item.label} value={key} key={key} />
+                <Select.Item label="All" value={"ALL"} />
+                {Object.entries(UserRoleConstants).map(([key, item]) => (
+                  <Select.Item label={item.label} value={key} />
                 ))}
               </Select>
             )}
-            name="status"
+            defaultValue="ALL"
+            name="role"
           />
         </Modal.Body>
         <Modal.Footer>
@@ -195,7 +196,7 @@ function FilterModal() {
               colorScheme="blueGray"
               onPress={() => {
                 reset();
-                onReset;
+                onReset();
               }}
             >
               Reset

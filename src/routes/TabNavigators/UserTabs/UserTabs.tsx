@@ -1,10 +1,10 @@
 import * as React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MyTripListScreen } from "../../../screens/MyTripListScreen";
-import { ActivityScreen } from "../../../screens/ActivityScreen";
 import { MyAccountScreen } from "../../../screens/MyAccountScreen";
 import { HomeStacks } from "../../StackNavigators/HomeStacks";
+import MyTripListStacks from "../../StackNavigators/MyTripListStacks/MyTripListStacks";
+import { ActivityStacks } from "../../StackNavigators/ActivityStacks";
 
 const Tab = createBottomTabNavigator();
 
@@ -28,7 +28,7 @@ const UserTabs: React.FC<{}> = () => {
       />
       <Tab.Screen
         name="Activity"
-        component={ActivityScreen}
+        component={ActivityStacks}
         options={{
           title: "Activity",
           tabBarIcon: ({ color, size }) => (
@@ -41,8 +41,8 @@ const UserTabs: React.FC<{}> = () => {
         }}
       />
       <Tab.Screen
-        name="MyTripList"
-        component={MyTripListScreen}
+        name="MyTripListStacks"
+        component={MyTripListStacks}
         options={{
           title: "My Trips",
           tabBarIcon: ({ color, size }) => (

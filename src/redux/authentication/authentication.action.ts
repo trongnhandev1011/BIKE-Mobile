@@ -4,6 +4,7 @@ import Constants from "expo-constants";
 import {
   getAuthenticatedUserAPI,
   loginAPI,
+  logoutAPI,
   refreshTokenAPI,
 } from "../../services/backend/AuthController";
 import { setAuthToken } from "../../services/backend/axiosClient";
@@ -51,17 +52,25 @@ export const login = createAsyncThunk<{ user: object }, { authCode: string }>(
       } = await getAuthenticatedUserAPI();
       return { user: userData };
     } catch (error: any) {
+      console.log(error);
       return thunkAPI.rejectWithValue(error);
     }
   }
 );
 
 export const logout = createAsyncThunk<void, void>("auth/logout", async () => {
-  setAuthToken(undefined);
-  await SecureStore.deleteItemAsync(
-    Constants!.expoConfig!.extra!.TOKEN_KEY as string
-  );
-  SecureStore.deleteItemAsync(
-    Constants!.expoConfig!.extra!.USER_STORAGE as string
-  );
+  try {
+    const refreshToken = await SecureStore.getItemAsync(
+      StoreKeyConstants.REFRESH_TOKEN
+    );
+    const res = await logoutAPI(refreshToken as string);
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setAuthToken(undefined);
+    await SecureStore.deleteItemAsync(StoreKeyConstants.TOKEN as string);
+    await SecureStore.deleteItemAsync(
+      StoreKeyConstants.REFRESH_TOKEN as string
+    );
+  }
 });
