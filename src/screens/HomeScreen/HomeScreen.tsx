@@ -7,7 +7,8 @@ import { TripCardComponent, TripCardSkeleton } from "../../components/TripCard";
 import { useQuery } from "react-query";
 import { getCurrentTripAPI } from "../../services/backend/TripsController";
 import moment from "moment";
-import { Trip } from "../../services/backend/TripsController/type";
+import { SimpleTrip } from "../../services/backend/TripsController/type";
+import _ from "lodash";
 
 export type HomeScreenProps = {};
 
@@ -35,7 +36,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
               url: "https://images.unsplash.com/photo-1467008203540-c6dfa96e7bb9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1176&q=80",
             }}
             title="Pick a Request"
-            onPress={() => navigation.navigate("PickRequest" as never)}
+            onPress={() => navigation.navigate("PublicPost" as never)}
           />
         </Flex>
       </Box>
@@ -44,20 +45,32 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
 };
 
 function CurrentTrip() {
-  const { isLoading, data, error } = useQuery("currentTrip", async () => {
+  const {
+    isLoading,
+    data: res,
+    error,
+  } = useQuery("currentTrip", async () => {
     return (await getCurrentTripAPI()).data;
   });
 
-  const mapperHandler = (data: Trip) => {
+  const mapperHandler = (data: SimpleTrip) => {
+    console.log(data);
     return {
-      toLocation: data["to_location"].name,
-      fromLocation: data["from_location"].name,
-      startAt: moment(data["start_at"]).format("h:mm a - DD/MM/YYYY"),
+      toLocation: data?.startStation,
+      fromLocation: data?.endStation,
+      startAt: data?.startAt
+        ? moment(data?.startAt).format("h:mm a - DD/MM/YYYY")
+        : "",
     };
   };
 
   //@ts-ignore
-  if (isLoading == false && (!data || error?.response?.status == 404))
+  if (
+    isLoading == false &&
+    (!res?.data ||
+      res.code !== 0 ||
+      _.get(error, "response.status", undefined) === 404)
+  )
     return null;
 
   return (
@@ -71,7 +84,7 @@ function CurrentTrip() {
             onPress={() => {
               //TODO: navigate to trip detail screen later
             }}
-            tripData={mapperHandler(data.data)}
+            tripData={mapperHandler(res.data)}
           />
         )}
       </Box>

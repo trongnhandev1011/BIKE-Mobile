@@ -56,7 +56,7 @@ export default function CreatePostScreen() {
           </Center>
         ) : (
           <Box mb="12">
-            <CreatePostForm handlePostSubmit={(result) => setSuccess(false)} />
+            <CreatePostForm handlePostSubmit={(result) => setSuccess(result)} />
           </Box>
         )}
       </ScrollView>

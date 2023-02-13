@@ -28,6 +28,7 @@ export default function NotificationProvider({
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token: any) => {
+      console.log(token);
       setExpoPushToken(token as string);
     });
     Notifications.addNotificationReceivedListener(handleNotification);
