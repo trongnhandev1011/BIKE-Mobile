@@ -1,6 +1,7 @@
 import React, { useState, useEffect, createContext } from "react";
 import * as Notifications from "expo-notifications";
 import registerForPushNotificationsAsync from "../../services/notificationService/registerForPushNotifcation";
+import useAuth from "../../hooks/useAuth";
 
 interface INotificationProviderProps {
   children: any;

@@ -9,6 +9,11 @@ import {
 } from "../../services/backend/AuthController";
 import { setAuthToken } from "../../services/backend/axiosClient";
 import StoreKeyConstants from "../../constants/StoreKeyConstants";
+import {
+  addMyExpoToken,
+  removeMyExpoToken,
+} from "../../services/backend/ExpoTokenController";
+import registerForPushNotificationsAsync from "../../services/notificationService/registerForPushNotifcation";
 
 export const initializeAuth = createAsyncThunk<{ user: object }, void>(
   "auth/init",
@@ -23,8 +28,17 @@ export const initializeAuth = createAsyncThunk<{ user: object }, void>(
       const {
         data: { data: userData },
       } = await getAuthenticatedUserAPI();
+      const expoToken = await registerForPushNotificationsAsync();
+      if (expoToken) {
+        const {
+          data: { data },
+        } = await addMyExpoToken(expoToken);
+        console.log(data);
+        if (!data.success) console.log("Can't add expo token to BE");
+      } else console.log("Can't get expo token");
       return { user: userData };
     } catch (error) {
+      console.log(error);
       return thunkAPI.rejectWithValue(error);
     }
   }
@@ -50,6 +64,14 @@ export const login = createAsyncThunk<{ user: object }, { authCode: string }>(
       const {
         data: { data: userData },
       } = await getAuthenticatedUserAPI();
+      const expoToken = await registerForPushNotificationsAsync();
+      if (expoToken) {
+        const {
+          data: { data },
+        } = await addMyExpoToken(expoToken);
+
+        if (!data.success) console.log("Can't add expo token to BE");
+      } else console.log("Can't get expo token");
       return { user: userData };
     } catch (error: any) {
       console.log(error);
@@ -59,6 +81,18 @@ export const login = createAsyncThunk<{ user: object }, { authCode: string }>(
 );
 
 export const logout = createAsyncThunk<void, void>("auth/logout", async () => {
+  try {
+    const expoToken = await registerForPushNotificationsAsync();
+    if (expoToken) {
+      const {
+        data: { data },
+      } = await removeMyExpoToken(expoToken);
+
+      if (!data.success) console.log("Can't remove expo token to BE");
+    } else console.log("Can't get expo token");
+  } catch (e) {
+    //ignore
+  }
   try {
     const refreshToken = await SecureStore.getItemAsync(
       StoreKeyConstants.REFRESH_TOKEN
