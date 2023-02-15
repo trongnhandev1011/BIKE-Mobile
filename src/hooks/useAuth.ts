@@ -1,8 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { AuthenticationState } from "../redux/authentication/authentication.slice";
+import {
+  AuthenticationState,
+  setUser,
+} from "../redux/authentication/authentication.slice";
 import { login, logout } from "../redux/authentication/authentication.action";
 import { RootState, useAppDispatch, useAppSelector } from "../redux/store";
+import { User } from "../types";
+import { AnyAction } from "@reduxjs/toolkit";
+import { getAuthenticatedUserAPI } from "../services/backend/AuthController";
 
 export default function useAuth({
   redirectTo = "",
@@ -26,6 +32,11 @@ export default function useAuth({
     } catch (e) {
       console.log(e);
     }
+  };
+
+  const updateUserInStore = async () => {
+    const { data: result } = await getAuthenticatedUserAPI();
+    dispatch(setUser(result.data));
   };
 
   useEffect(() => {
@@ -57,6 +68,7 @@ export default function useAuth({
     action: {
       login: loginHandler,
       logout: logoutHandler,
+      updateProfileHandler: updateUserInStore,
     },
   };
 }
