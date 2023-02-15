@@ -1,9 +1,9 @@
 import * as React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MyAccountScreen } from "../../../screens/MyAccountScreen";
 import { HomeStacks } from "../../StackNavigators/HomeStacks";
 import MyTripListStacks from "../../StackNavigators/MyTripListStacks/MyTripListStacks";
+import MyAccountStacks from "../../StackNavigators/MyAccountStacks/MyAccountStacks";
 import { ActivityStacks } from "../../StackNavigators/ActivityStacks";
 
 const Tab = createBottomTabNavigator();
@@ -56,7 +56,7 @@ const UserTabs: React.FC<{}> = () => {
       />
       <Tab.Screen
         name="MyAccount"
-        component={MyAccountScreen}
+        component={MyAccountStacks}
         options={{
           title: "My Account",
           tabBarIcon: ({ color, size }) => (

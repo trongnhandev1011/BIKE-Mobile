@@ -11,6 +11,7 @@ import NotificationProvider from "./containers/NotificationProvider/Notification
 import AuthProvider from "./containers/AuthProvider/AuthProvider";
 import UserTabs from "./routes/TabNavigators/UserTabs/UserTabs";
 import LoginScreen from "./screens/LoginScreen/LoginScreen";
+import MyAccountStacks from "./routes/StackNavigators/MyAccountStacks/MyAccountStacks";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -30,6 +31,7 @@ const App: React.FC<Props> = () => {
                 <AuthProvider
                   unAuthComponent={(user) => <LoginScreen />}
                   authComponent={(user) => <UserTabs />}
+                  unUpdatedAuthComponent={(user) => <MyAccountStacks />}
                 />
               </NavigationContainer>
             </NotificationProvider>

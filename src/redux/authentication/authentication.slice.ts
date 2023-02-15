@@ -4,7 +4,7 @@ import { initializeAuth, login, logout } from "./authentication.action";
 
 export type AuthenticationState = {
   isAuthUser: boolean;
-  user: User;
+  user: User | {};
   dataFetched: boolean;
   isFetching: boolean;
   isError: boolean;
