@@ -6,6 +6,7 @@ import {
   UpdateAvatarScreen,
   UpdateStudentCardScreen,
 } from "../../../screens/UpdateProfileScreen";
+import { UpdateVehicleScreen } from "../../../screens/UpdateVehicleScreen";
 const Stack = createNativeStackNavigator();
 
 export default function MyAccountStacks() {
@@ -19,6 +20,11 @@ export default function MyAccountStacks() {
       <Stack.Screen
         name="UpdateProfileScreen"
         component={UpdateProfileScreen}
+        options={{ title: "Update profile" }}
+      />
+      <Stack.Screen
+        name="UpdateVehicleScreen"
+        component={UpdateVehicleScreen}
         options={{ title: "Update profile" }}
       />
       <Stack.Screen
