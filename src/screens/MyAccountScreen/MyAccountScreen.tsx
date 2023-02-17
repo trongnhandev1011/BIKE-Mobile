@@ -47,7 +47,9 @@ export default function MyAccountScreen() {
           <Avatar
             size={60}
             source={{
-              uri: `https://s3-ap-southeast-1.amazonaws.com${user?.avatar}`,
+              uri: `https://s3-ap-southeast-1.amazonaws.com${
+                (user as User)?.avatar
+              }`,
             }}
           />
           <View ml="3">
@@ -73,6 +75,10 @@ export default function MyAccountScreen() {
         <NavigationLabelComponent
           path="UpdateProfileScreen"
           text="Update your profile"
+        />
+        <NavigationLabelComponent
+          path="UpdateVehicleScreen"
+          text="Update vehicle information"
         />
         <HStack
           alignItems="center"

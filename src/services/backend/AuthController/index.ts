@@ -52,6 +52,23 @@ export function uploadMedia(file: ImagePicker.ImagePickerAsset) {
   });
 }
 
+export function uploadImage(filePath: string) {
+  let localUri = filePath;
+  let filename = localUri.split("/").pop() as string;
+
+  // Infer the type of the image
+  let match = /\.(\w+)$/.exec(filename);
+  let type = match ? `image/${match[1]}` : `image`;
+
+  const mediaFile = new FormData();
+  mediaFile.append("file", { uri: localUri, name: filename, type });
+  return axiosClient.post<Response<{ path: string }>>("/medias", mediaFile, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+}
+
 export function updateProfile(profileData: UpdateProfileData) {
   return axiosClient.put<Response<{ success: boolean }>>(
     "/users/me",
