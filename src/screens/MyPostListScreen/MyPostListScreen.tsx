@@ -47,6 +47,7 @@ export default function MyPostListScreen() {
     data: postData,
     hasNextPage,
     fetchNextPage,
+    refetch,
   } = useInfiniteQuery(
     [queryKey],
     async ({ pageParam = 1, queryKey }) => {
@@ -65,6 +66,14 @@ export default function MyPostListScreen() {
     }
   );
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      refetch();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const mapperHandler = (data: SimplePost) => {
     return {
       toLocation: data.startStation,
@@ -74,6 +83,8 @@ export default function MyPostListScreen() {
         : "",
       status: data.status,
       role: data.role,
+      postId: data.id,
+      description: data.description,
     };
   };
 
@@ -128,7 +139,7 @@ export default function MyPostListScreen() {
             hasNextPage={hasNextPage}
             fetchNextPage={fetchNextPage}
             isLoading={isLoading}
-            render={(post) => (
+            render={(post: SimplePost) => (
               <PostCardComponent
                 key={post.id}
                 postData={mapperHandler(post)}

@@ -1,3 +1,6 @@
+import { User } from "../../../types";
+import { Station } from "../StationsController/type";
+
 export type SimplePost = {
   id: number;
   role: "GRABBER" | "PASSENGER";
@@ -20,4 +23,18 @@ export type CreatePost = {
   startTime: string;
   description: string;
   role: "GRABBER" | "PASSENGER";
+};
+
+export type PostDetail = {
+  id: number;
+  role: string;
+  description: string;
+  startTime: string;
+  createdAt: string;
+  modifiedAt: string;
+  status: string;
+  author: User;
+  startStation: Station;
+  endStation: Station;
+  applications: User[];
 };

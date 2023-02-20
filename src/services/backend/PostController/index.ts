@@ -1,6 +1,7 @@
+import { User } from "../../../types";
 import { PaginationResponse, Response } from "../../../types/Response.type";
 import axiosClient from "../axiosClient";
-import { CreatePost, SimplePost } from "./type";
+import { CreatePost, PostDetail, SimplePost } from "./type";
 
 export const createPostAPI = (values: CreatePost) =>
   axiosClient.post<Response<SimplePost>>("/posts", values);
@@ -43,5 +44,29 @@ export const getAllPublicPostsAPI = (
     {
       params: params,
     }
+  );
+};
+
+export const getPostDetail = (postId: number) => {
+  return axiosClient.get<Response<PostDetail>>(`posts/${postId}`);
+};
+
+export const cancelPost = (postId: number) => {
+  return axiosClient.delete<Response<SimplePost>>(`posts/${postId}`);
+};
+
+export const getAppliers = (postId: number) => {
+  return axiosClient.get<PaginationResponse<User>>(`posts/${postId}/appliers`);
+};
+
+export const acceptAppliers = (postId: number, applierId: string) => {
+  return axiosClient.put<Response<{ success: boolean }>>(
+    `posts/${postId}/appliers/${applierId}`
+  );
+};
+
+export const rejectAppliers = (postId: number, applierId: string) => {
+  return axiosClient.delete<Response<{ success: boolean }>>(
+    `posts/${postId}/appliers/${applierId}`
   );
 };
