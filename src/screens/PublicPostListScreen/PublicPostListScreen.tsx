@@ -137,7 +137,7 @@ export default function PublicPostListScreen() {
                 postData={mapperHandler(post)}
                 onPress={() => {
                   navigation.navigate(
-                    "PostDetailScreen" as never,
+                    "PublicPostDetailScreen" as never,
                     {
                       postId: post.id,
                     } as never
