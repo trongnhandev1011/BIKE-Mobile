@@ -70,3 +70,25 @@ export const rejectAppliers = (postId: number, applierId: string) => {
     `posts/${postId}/appliers/${applierId}`
   );
 };
+
+export const applyPost = (postId: number) => {
+  return axiosClient.post<Response<{ success: boolean }>>(
+    `posts/${postId}/appliers`,
+    {
+      params: {
+        id: postId,
+      },
+    }
+  );
+};
+
+export const cancelApplyPost = (postId: number) => {
+  return axiosClient.delete<Response<{ success: boolean }>>(
+    `posts/${postId}/appliers`,
+    {
+      params: {
+        id: postId,
+      },
+    }
+  );
+};
