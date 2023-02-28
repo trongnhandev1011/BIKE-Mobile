@@ -45,6 +45,7 @@ export default function MyTripListScreen() {
   const {
     isLoading,
     data: tripData,
+    refetch,
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery(
@@ -59,7 +60,7 @@ export default function MyTripListScreen() {
     },
     {
       getNextPageParam: (_lastPage, pages) => {
-        if (_lastPage.page < _lastPage.totalPage - 1) {
+        if (_lastPage.page < _lastPage.totalPage) {
           return pages.length + 1;
         } else {
           return undefined;
@@ -79,6 +80,14 @@ export default function MyTripListScreen() {
       status: data.status,
     };
   };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      refetch();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <>

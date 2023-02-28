@@ -8,10 +8,15 @@ import { Platform } from "react-native";
 
 type Props = {
   value: Date;
+  minimumDate?: Date | undefined;
   onChange?: (event: DateTimePickerEvent, date: Date | undefined) => void;
 };
 
-export default function CustomizedDateTimePicker({ value, onChange }: Props) {
+export default function CustomizedDateTimePicker({
+  value,
+  onChange,
+  minimumDate,
+}: Props) {
   const [showDatePicker, setShowDatePicker] = useState(() => {
     if (Platform.OS === "ios") return true;
     else return false;
@@ -71,6 +76,7 @@ export default function CustomizedDateTimePicker({ value, onChange }: Props) {
       ) : null}
       {showDatePicker ? (
         <RNDateTimePicker
+          minimumDate={minimumDate}
           mode="date"
           value={value}
           onChange={(event, date) => handleOnChange("date", event, date)}
@@ -78,6 +84,7 @@ export default function CustomizedDateTimePicker({ value, onChange }: Props) {
       ) : null}
       {showTimePicker ? (
         <RNDateTimePicker
+          minimumDate={minimumDate}
           mode="time"
           value={value}
           onChange={(event, date) => handleOnChange("time", event, date)}

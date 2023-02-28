@@ -3,6 +3,7 @@ import { Pressable } from "react-native";
 import { Avatar, Box, Flex, Text, TextArea } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { SimpleTrip } from "../../services/backend/TripsController/type";
+import { DescriptionLine } from "../DescriptionLine";
 
 export type Props = {
   tripData: any;
@@ -23,20 +24,28 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
               />
             </Avatar>
           </Box>
-          <Box marginLeft={4}>
-            <Text fontSize="md">
-              <Text fontWeight="semibold">From:</Text> {tripData?.fromLocation}
-            </Text>
-            <Text fontSize="md">
-              <Text fontWeight="semibold">To:</Text> {tripData?.toLocation}
-            </Text>
-            <Text fontSize="md">
-              <Text fontWeight="semibold">Start at:</Text> {tripData?.startAt}
-            </Text>
+          <Box marginLeft={4} w="full">
+            <DescriptionLine
+              fontWeight="semibold"
+              title="From"
+              description={tripData?.fromLocation}
+            />
+            <DescriptionLine
+              fontWeight="semibold"
+              title="To"
+              description={tripData?.toLocation}
+            />
+            <DescriptionLine
+              fontWeight="semibold"
+              title="Start at"
+              description={tripData?.startAt}
+            />
             {tripData?.status ? (
-              <Text fontSize="md">
-                <Text fontWeight="semibold">Status:</Text> {tripData?.status}
-              </Text>
+              <DescriptionLine
+                fontWeight="semibold"
+                title="Status"
+                description={tripData?.status}
+              />
             ) : null}
           </Box>
         </Flex>

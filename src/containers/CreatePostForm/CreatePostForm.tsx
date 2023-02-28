@@ -1,5 +1,5 @@
 import { Box, Button, Input, Select, VStack } from "native-base";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import moment from "moment";
 import { CustomizedDateTimePicker } from "../CustomizedDateTimePicker";
@@ -32,9 +32,17 @@ export default function CreatePostForm({
 }: {
   handlePostSubmit?: (result: boolean, data: any) => void;
 }) {
-  //TODO: might need to call 2 api for from and to location
+  const [queryKey, setQueryKey] = useState(null);
   const { isLoading, data: stationData } = useQuery("stations", async () => {
     const res = (await getAllStationsAPI()).data;
+    if (res.code != 0) throw new Error("Invalid respnose");
+    return res;
+  });
+  const { data: toStationData } = useQuery([queryKey], async ({ queryKey }) => {
+    const fromStation = queryKey?.[0];
+    if (fromStation == null) return { data: { items: [] } };
+
+    const res = (await getAllStationsAPI(fromStation)).data;
     if (res.code != 0) throw new Error("Invalid respnose");
     return res;
   });
@@ -101,7 +109,10 @@ export default function CreatePostForm({
             control={control}
             render={({ field: { onChange, value } }) => (
               <Select
-                onValueChange={onChange}
+                onValueChange={(value: string) => {
+                  setQueryKey(value);
+                  onChange(value);
+                }}
                 selectedValue={value}
                 placeholder="Pick start location"
                 {...defaultFormStyle}
@@ -120,24 +131,28 @@ export default function CreatePostForm({
           <FormItem
             isInvalid={!!errors["toLocation"]}
             name="endStationId"
-            label="To"
+            label={queryKey == null ? undefined : "To"}
             control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                onValueChange={onChange}
-                selectedValue={value}
-                placeholder="Pick destination"
-                {...defaultFormStyle}
-              >
-                {stationData?.data?.items.map((station) => (
-                  <Select.Item
-                    label={station.name}
-                    value={station.id.toString()}
-                    key={station.id}
-                  />
-                ))}
-              </Select>
-            )}
+            render={({ field: { onChange, value } }) =>
+              queryKey == null ? (
+                <Box></Box>
+              ) : (
+                <Select
+                  onValueChange={onChange}
+                  selectedValue={value}
+                  placeholder="Pick destination"
+                  {...defaultFormStyle}
+                >
+                  {toStationData?.data?.items.map((station) => (
+                    <Select.Item
+                      label={station.name}
+                      value={station.id.toString()}
+                      key={station.id}
+                    />
+                  ))}
+                </Select>
+              )
+            }
             rules={CreatePostFormRules.endStationId}
           />
           <FormItem
@@ -147,6 +162,7 @@ export default function CreatePostForm({
             render={({ field: { onChange, value } }) => {
               return (
                 <CustomizedDateTimePicker
+                  minimumDate={new Date(Date.now())}
                   value={new Date(value)}
                   onChange={(_, date) => {
                     onChange(moment(date).utc());
