@@ -5,14 +5,16 @@ const DescriptionLine = ({
   title,
   description,
   fontSize = "md",
+  fontWeight = "bold",
 }: {
   title: string;
   description: string;
   fontSize?: string;
+  fontWeight?: string;
 }) => {
   return (
     <Text fontSize={fontSize}>
-      <Text fontSize={fontSize} bold>
+      <Text fontSize={fontSize} fontWeight={fontWeight}>
         {title}
       </Text>
       {": "}

@@ -59,7 +59,7 @@ export default function PublicPostListScreen() {
     },
     {
       getNextPageParam: (_lastPage, pages) => {
-        if (_lastPage.page < _lastPage.totalPage - 1) {
+        if (_lastPage.page < _lastPage.totalPage) {
           return pages.length + 1;
         } else {
           return undefined;

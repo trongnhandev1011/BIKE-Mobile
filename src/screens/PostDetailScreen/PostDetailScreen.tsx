@@ -73,7 +73,7 @@ export default function PostDetailScreen() {
     data: res,
     refetch,
   } = useQuery("postDetail", async () => {
-    const result = (await getPostDetail(postId)).data;
+    const result = (await getPostDetail(postId))?.data;
 
     return result;
   });
@@ -81,7 +81,7 @@ export default function PostDetailScreen() {
   const checkIsOwner = () => res?.data?.author?.id === user.id;
 
   const checkIsApply = () =>
-    res?.data.applications?.some((applier: User) => applier.id === user.id) ??
+    res?.data?.applications?.some((applier: User) => applier.id === user.id) ??
     false;
 
   const cancelPostHandler = async () => {
@@ -185,7 +185,7 @@ export default function PostDetailScreen() {
                 Partner information
               </Text>
               <VStack space={1}>
-                {getProfileInformation(user).map((data) => (
+                {getProfileInformation(res?.data?.author).map((data) => (
                   <DescriptionLine
                     title={data.title}
                     description={data.description}

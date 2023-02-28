@@ -5,6 +5,7 @@ import { HomeStacks } from "../../StackNavigators/HomeStacks";
 import MyTripListStacks from "../../StackNavigators/MyTripListStacks/MyTripListStacks";
 import MyAccountStacks from "../../StackNavigators/MyAccountStacks/MyAccountStacks";
 import { ActivityStacks } from "../../StackNavigators/ActivityStacks";
+import { MyNotificationListScreen } from "../../../screens/MyNotificationListScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -51,6 +52,16 @@ const UserTabs: React.FC<{}> = () => {
               size={size}
               color={color}
             />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Notification"
+        component={MyNotificationListScreen}
+        options={{
+          title: "Notification",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="bell" size={size} color={color} />
           ),
         }}
       />
