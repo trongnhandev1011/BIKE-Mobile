@@ -14,11 +14,13 @@ import { useInfiniteQuery } from "react-query";
 import { TripCardComponent, TripCardSkeleton } from "../../components/TripCard";
 import moment from "moment";
 import { SimpleTrip } from "../../services/backend/TripsController/type";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import { FormItem } from "../../containers/FormItem";
 import { InfiniteList } from "../../components/InfiniteList";
 import { TripStatusConstants } from "../../constants/TripStatusConstants";
+import { CustomizedDateTimePicker } from "../../containers/CustomizedDateTimePicker";
+import { AppLoading } from "../../components/AppLoading";
 
 export type MyTripListScreenProps = {};
 
@@ -41,21 +43,37 @@ const FilterModalContext = createContext<{
 export default function MyTripListScreen() {
   const navigation = useNavigation();
   const [isOpenModal, setOpenModal] = useState(false);
-  const [queryKey, setQueryKey] = useState({ status: undefined, query: "" });
+  const [queryKey, setQueryKey] = useState({
+    status: undefined,
+    startFrom: undefined,
+    startTo: undefined,
+    query: "",
+  });
   const {
     isLoading,
+    isRefetching,
     data: tripData,
     refetch,
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery(
-    [queryKey],
+    [queryKey, "myTrips"],
     async ({ pageParam = 1, queryKey }) => {
-      const { status, query } = queryKey?.[0] ?? {
+      const { status, query, startFrom, startTo } = queryKey?.[0] ?? {
         status: undefined,
+        startFrom: undefined,
+        startTo: undefined,
         query: "",
       };
-      const res = (await getAllTripsAPI(pageParam, 10, status, query)).data;
+
+      const res = (
+        await getAllTripsAPI(pageParam, 10, {
+          status: status ? status : undefined,
+          query,
+          startFrom: startFrom ? moment(startFrom).toISOString() : undefined,
+          startTo: startFrom ? moment(startTo).toISOString() : undefined,
+        })
+      ).data;
       return res.data;
     },
     {
@@ -70,24 +88,21 @@ export default function MyTripListScreen() {
   );
 
   const mapperHandler = (data: SimpleTrip) => {
-    console.log(data);
     return {
       toLocation: data.startStation,
       fromLocation: data.endStation,
-      startAt: data.startAt
-        ? moment(data.startAt).format("h:mm a - DD/MM/YYYY")
+      startAt: data.postedStartTime
+        ? moment(data.postedStartTime).format("h:mm a - DD/MM/YYYY")
         : "",
       status: data.status,
     };
   };
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      refetch();
-    });
+  useFocusEffect(() => {
+    refetch();
+  });
 
-    return unsubscribe;
-  }, [navigation]);
+  if (isLoading) return <AppLoading />;
 
   return (
     <>
@@ -95,10 +110,13 @@ export default function MyTripListScreen() {
         value={{
           isOpenModal,
           submitHandler: (data: any) => {
+            console.log(data);
             setOpenModal(false);
             setQueryKey((preState) => ({
               ...preState,
               status: data?.status === "ALL" ? undefined : data?.status,
+              startFrom: data?.startFrom,
+              startTo: data?.startTo,
             }));
           },
           onCancel: () => {
@@ -164,7 +182,7 @@ export default function MyTripListScreen() {
 function FilterModal() {
   const { isOpenModal, submitHandler, onCancel, onReset } =
     useContext(FilterModalContext);
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, getValues } = useForm({
     defaultValues: defaultFilterValues,
   });
   const onSubmit = (data: any) => {
@@ -196,6 +214,34 @@ function FilterModal() {
             )}
             name="status"
           />
+          <FormItem
+            label="Start from"
+            control={control as any}
+            render={({ field: { onChange, value } }) => (
+              <CustomizedDateTimePicker
+                value={new Date(value)}
+                onChange={(_, date) => {
+                  onChange(moment(date).utc());
+                }}
+              />
+            )}
+            defaultValue={moment(Date.now()).utc()}
+            name="startFrom"
+          />
+          <FormItem
+            label="Start to"
+            control={control as any}
+            render={({ field: { onChange, value } }) => (
+              <CustomizedDateTimePicker
+                value={new Date(value)}
+                onChange={(_, date) => {
+                  onChange(moment(date).utc());
+                }}
+              />
+            )}
+            defaultValue={moment(Date.now()).utc()}
+            name="startTo"
+          />
         </Modal.Body>
         <Modal.Footer>
           <Button.Group space={2}>
@@ -204,7 +250,8 @@ function FilterModal() {
               colorScheme="blueGray"
               onPress={() => {
                 reset();
-                onReset;
+                onReset();
+                onSubmit(getValues());
               }}
             >
               Reset

@@ -151,6 +151,7 @@ const UpdateProfileScreen = () => {
           </VStack>
         </View>
         <Button
+          mt="4"
           isLoading={loading}
           onPress={() => updateUserProfile()}
           borderRadius="20"

@@ -1,4 +1,8 @@
-import { useRoute, useNavigation } from "@react-navigation/native";
+import {
+  useRoute,
+  useNavigation,
+  useFocusEffect,
+} from "@react-navigation/native";
 import {
   Text,
   Box,
@@ -70,9 +74,10 @@ export default function PostDetailScreen() {
 
   const {
     isLoading,
+    isRefetching,
     data: res,
     refetch,
-  } = useQuery("postDetail", async () => {
+  } = useQuery(["postDetail", params.postId], async () => {
     const result = (await getPostDetail(postId))?.data;
 
     return result;
@@ -108,13 +113,9 @@ export default function PostDetailScreen() {
     }
   };
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      refetch();
-    });
-
-    return unsubscribe;
-  }, [navigation]);
+  useFocusEffect(() => {
+    refetch();
+  });
 
   if (isLoading) return <AppLoading />;
 

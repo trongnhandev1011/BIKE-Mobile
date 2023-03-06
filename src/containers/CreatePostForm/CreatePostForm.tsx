@@ -33,19 +33,25 @@ export default function CreatePostForm({
   handlePostSubmit?: (result: boolean, data: any) => void;
 }) {
   const [queryKey, setQueryKey] = useState(null);
-  const { isLoading, data: stationData } = useQuery("stations", async () => {
-    const res = (await getAllStationsAPI()).data;
-    if (res.code != 0) throw new Error("Invalid respnose");
-    return res;
-  });
-  const { data: toStationData } = useQuery([queryKey], async ({ queryKey }) => {
-    const fromStation = queryKey?.[0];
-    if (fromStation == null) return { data: { items: [] } };
+  const { isLoading, data: stationData } = useQuery(
+    ["fromStations"],
+    async () => {
+      const res = (await getAllStationsAPI()).data;
+      if (res.code != 0) throw new Error("Invalid respnose");
+      return res;
+    }
+  );
+  const { data: toStationData } = useQuery(
+    [queryKey, "toStations"],
+    async ({ queryKey }) => {
+      const fromStation = queryKey?.[0];
+      if (fromStation == null) return { data: { items: [] } };
 
-    const res = (await getAllStationsAPI(fromStation)).data;
-    if (res.code != 0) throw new Error("Invalid respnose");
-    return res;
-  });
+      const res = (await getAllStationsAPI(fromStation)).data;
+      if (res.code != 0) throw new Error("Invalid respnose");
+      return res;
+    }
+  );
   const {
     control,
     handleSubmit,

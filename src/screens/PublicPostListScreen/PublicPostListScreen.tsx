@@ -12,7 +12,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useInfiniteQuery } from "react-query";
 import { PostCardComponent, PostCardSkeleton } from "../../components/PostCard";
 import moment from "moment";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import { FormItem } from "../../containers/FormItem";
 import { InfiniteList } from "../../components/InfiniteList";
@@ -22,6 +22,8 @@ import {
 } from "../../services/backend/PostController";
 import { SimplePost } from "../../services/backend/PostController/type";
 import { UserRoleConstants } from "../../constants/UserRoleConstants";
+import { CustomizedDateTimePicker } from "../../containers/CustomizedDateTimePicker";
+import { AppLoading } from "../../components/AppLoading";
 
 export type PublicPostListScreenProps = {};
 
@@ -44,17 +46,35 @@ const FilterModalContext = createContext<{
 export default function PublicPostListScreen() {
   const navigation = useNavigation();
   const [isOpenModal, setOpenModal] = useState(false);
-  const [queryKey, setQueryKey] = useState({ role: undefined, query: "" });
+  const [queryKey, setQueryKey] = useState({
+    role: undefined,
+    startFrom: undefined,
+    startTo: undefined,
+    query: "",
+  });
   const {
     isLoading,
+    refetch,
     data: postData,
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery(
-    [queryKey],
+    [queryKey, "publicPosts"],
     async ({ pageParam = 1, queryKey }) => {
-      const { role, query } = queryKey?.[0] ?? { role: undefined, query: "" };
-      const res = (await getAllPublicPostsAPI(pageParam, 10, role, query)).data;
+      const { role, query, startFrom, startTo } = queryKey?.[0] ?? {
+        role: undefined,
+        startFrom: undefined,
+        startTo: undefined,
+        query: "",
+      };
+      const res = (
+        await getAllPublicPostsAPI(pageParam, 10, {
+          role: role ? role : undefined,
+          query,
+          startFrom: startFrom ? moment(startFrom).toISOString() : undefined,
+          startTo: startFrom ? moment(startTo).toISOString() : undefined,
+        })
+      ).data;
       return res.data;
     },
     {
@@ -80,6 +100,12 @@ export default function PublicPostListScreen() {
     };
   };
 
+  useFocusEffect(() => {
+    refetch();
+  });
+
+  if (isLoading) return <AppLoading />;
+
   return (
     <>
       <FilterModalContext.Provider
@@ -90,6 +116,8 @@ export default function PublicPostListScreen() {
             setQueryKey((preState) => ({
               ...preState,
               role: data?.role === "ALL" ? undefined : data?.role,
+              startFrom: data?.startFrom,
+              startTo: data?.startTo,
             }));
           },
           onCancel: () => {
@@ -155,7 +183,7 @@ export default function PublicPostListScreen() {
 function FilterModal() {
   const { isOpenModal, submitHandler, onCancel, onReset } =
     useContext(FilterModalContext);
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, getValues } = useForm({
     defaultValues: defaultFilterValues,
   });
   const onSubmit = (data: any) => {
@@ -188,6 +216,34 @@ function FilterModal() {
             defaultValue="ALL"
             name="role"
           />
+          <FormItem
+            label="Start from"
+            control={control as any}
+            render={({ field: { onChange, value } }) => (
+              <CustomizedDateTimePicker
+                value={new Date(value)}
+                onChange={(_, date) => {
+                  onChange(moment(date).utc());
+                }}
+              />
+            )}
+            defaultValue={moment(Date.now()).utc()}
+            name="startFrom"
+          />
+          <FormItem
+            label="Start to"
+            control={control as any}
+            render={({ field: { onChange, value } }) => (
+              <CustomizedDateTimePicker
+                value={new Date(value)}
+                onChange={(_, date) => {
+                  onChange(moment(date).utc());
+                }}
+              />
+            )}
+            defaultValue={moment(Date.now()).utc()}
+            name="startTo"
+          />
         </Modal.Body>
         <Modal.Footer>
           <Button.Group space={2}>
@@ -197,6 +253,7 @@ function FilterModal() {
               onPress={() => {
                 reset();
                 onReset();
+                onSubmit(getValues());
               }}
             >
               Reset
