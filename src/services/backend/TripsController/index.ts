@@ -8,17 +8,21 @@ export const getCurrentTripAPI = () =>
 export const getAllTripsAPI = (
   page: number = 1,
   pageSize: number = 20,
-  status?: string,
-  query: string = ""
-) =>
-  axiosClient.get<PaginationResponse<SimpleTrip>>("/trips", {
-    params: {
-      page: page,
-      pageSize: pageSize,
-      status: status,
-      query: query,
-    },
+  params: any = {}
+) => {
+  const tmp = {
+    page: page,
+    pageSize: pageSize,
+    ...params,
+  };
+  const finalParams = {};
+  Object.keys(tmp).forEach((key) => {
+    if (tmp[key] !== undefined) finalParams[key] = tmp[key];
   });
+  return axiosClient.get<PaginationResponse<SimpleTrip>>(
+    `/trips?${new URLSearchParams(finalParams).toString()}`
+  );
+};
 
 export const getTripDetailAPI = (tripId: number) =>
   axiosClient.get<Response<TripDetail>>(`/trips/${tripId}`);

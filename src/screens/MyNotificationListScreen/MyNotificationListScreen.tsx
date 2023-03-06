@@ -10,7 +10,7 @@ import {
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useInfiniteQuery } from "react-query";
 import moment from "moment";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import { FormItem } from "../../containers/FormItem";
 import { InfiniteList } from "../../components/InfiniteList";
@@ -30,6 +30,7 @@ import {
   readNotificationAPI,
 } from "../../services/backend/NotificationController";
 import axiosClient from "../../services/backend/axiosClient";
+import { AppLoading } from "../../components/AppLoading";
 
 export type MyNotificationListScreenProps = {};
 
@@ -58,7 +59,7 @@ export default function MyNotificationListScreen() {
     fetchNextPage,
     refetch,
   } = useInfiniteQuery(
-    [queryKey],
+    [queryKey, "myNotifications"],
     async ({ pageParam = 1, queryKey }) => {
       const { role } = queryKey?.[0] ?? { role: undefined };
       const res = (await getAllNotificationsAPI(pageParam, 10)).data;
@@ -75,6 +76,12 @@ export default function MyNotificationListScreen() {
       },
     }
   );
+
+  useFocusEffect(() => {
+    refetch();
+  });
+
+  if (isLoading) return <AppLoading />;
 
   return (
     <>

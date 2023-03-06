@@ -55,7 +55,7 @@ export default function MyApplicationListScreen() {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery(
-    [queryKey],
+    [queryKey, "myApplications"],
     async ({ pageParam = 1, queryKey }) => {
       const { role } = queryKey?.[0] ?? { role: undefined };
       const res = (await getAllApplicationsAPI(pageParam, 10)).data;

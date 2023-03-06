@@ -9,41 +9,42 @@ export const createPostAPI = (values: CreatePost) =>
 export const getAllPostsAPI = (
   page: number = 1,
   pageSize: number = 20,
-  role?: string | undefined,
-  query: string = ""
+  params: any = {}
 ) => {
-  const params = {
+  const tmp = {
     page: page,
     pageSize: pageSize,
-    role: role,
-    query: query,
+    ...params,
   };
-  !role && delete params.role;
-
-  return axiosClient.get<PaginationResponse<SimplePost>>("/posts", {
-    params: params,
+  const finalParams = {};
+  Object.keys(tmp).forEach((key) => {
+    if (tmp[key] !== undefined) finalParams[key] = tmp[key];
   });
+
+  return axiosClient.get<PaginationResponse<SimplePost>>(
+    `/posts?${new URLSearchParams(finalParams).toString()}`
+  );
 };
 
 export const getAllPublicPostsAPI = (
   page: number = 1,
   pageSize: number = 20,
-  role?: string | undefined,
-  query: string = ""
+  params: any = {}
 ) => {
-  const params = {
+  const tmp = {
     page: page,
     pageSize: pageSize,
-    role: role,
-    query: query,
+    ...params,
   };
-  !role && delete params.role;
+  const finalParams = {};
+  Object.keys(tmp).forEach((key) => {
+    if (tmp[key] !== undefined) finalParams[key] = tmp[key];
+  });
 
   return axiosClient.get<PaginationResponse<SimplePost>>(
-    "http://52.74.214.224:8080/api/index/v1/posts",
-    {
-      params: params,
-    }
+    `http://52.74.214.224:8080/api/index/v1/posts?${new URLSearchParams(
+      finalParams
+    ).toString()}`
   );
 };
 

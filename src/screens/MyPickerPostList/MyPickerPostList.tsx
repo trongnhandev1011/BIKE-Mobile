@@ -1,6 +1,6 @@
 import { Box } from "native-base";
 import React from "react";
-import { useRoute } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { PostRequestCard } from "../../components/PostRequestCard";
 import { useQuery } from "react-query";
 import { getAppliers } from "../../services/backend/PostController";
@@ -14,8 +14,16 @@ const MyPickerPostList = () => {
 
   const navigation = useNavigation();
 
-  const { isLoading, data: res } = useQuery("postDetail", async () => {
+  const {
+    isLoading,
+    data: res,
+    refetch,
+  } = useQuery(["pickerPostDetail", postId], async () => {
     return (await getAppliers(postId)).data.data.items;
+  });
+
+  useFocusEffect(() => {
+    refetch();
   });
 
   if (isLoading) return <AppLoading />;

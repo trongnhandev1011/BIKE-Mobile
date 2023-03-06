@@ -26,6 +26,7 @@ export type SimpleTrip = {
   startStation: string;
   endStationId: number;
   endStation: string;
+  postedStartTime: string;
 };
 
 export type TripDetail = {
