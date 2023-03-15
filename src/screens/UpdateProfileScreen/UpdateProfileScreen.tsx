@@ -167,6 +167,7 @@ const UpdateProfileScreen = () => {
           isLoading={loading}
           onPress={() => updateUserProfile()}
           rounded="lg"
+          backgroundColor="#059669"
         >
           Save
         </Button>

@@ -52,7 +52,7 @@ export default function VehicleCard() {
     <>
       {!vehicleData ? (
         <Center>
-          <Center backgroundColor={"indigo.500"} w="150" h="150" rounded="full">
+          <Center backgroundColor="#33B565" w="150" h="150" rounded="full">
             <MaterialCommunityIcons name="motorbike" size={100} color="white" />
           </Center>
           <Text fontSize="lg" mt="5" fontWeight="semibold">

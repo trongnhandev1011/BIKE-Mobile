@@ -5,6 +5,8 @@ import { CreatePostScreen } from "../../../screens/CreatePostScreen";
 import PublicPostListScreen from "../../../screens/PublicPostListScreen/PublicPostListScreen";
 import { PostDetailScreen } from "../../../screens/PostDetailScreen";
 import { MyPostListScreen } from "../../../screens/MyPostListScreen";
+import { MyPickerPostListScreen } from "../../../screens/MyPickerPostList";
+import { PickerProfileScreen } from "../../../screens/PickerProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +37,16 @@ export default function HomeStacks() {
         name="MyPostListScreen"
         component={MyPostListScreen}
         options={{ title: "My Posts" }}
+      />
+      <Stack.Screen
+        name="MyPickerPostListScreen"
+        component={MyPickerPostListScreen}
+        options={{ title: "My picker post list" }}
+      />
+      <Stack.Screen
+        name="PickerProfileScreen"
+        component={PickerProfileScreen}
+        options={{ title: "Picker profile" }}
       />
     </Stack.Navigator>
   );

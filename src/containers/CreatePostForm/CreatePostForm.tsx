@@ -1,4 +1,4 @@
-import { Box, Button, Input, Select, Text, VStack } from "native-base";
+import { Box, Button, Input, Select, Text, VStack, HStack } from "native-base";
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import moment from "moment";
@@ -14,6 +14,7 @@ import { CreatePost } from "../../services/backend/PostController/type";
 import { createPostAPI } from "../../services/backend/PostController";
 import { ErrorContext } from "../ErrorProvider/ErrorProvider";
 import { useNavigation } from "@react-navigation/native";
+import { Image } from "react-native";
 
 const defaultFormStyle: {
   fontSize: string;
@@ -222,10 +223,18 @@ export default function CreatePostForm({
             )}
             rules={CreatePostFormRules.description}
           />
-          <Button mt="4" onPress={handleSubmit(onSubmit)} rounded="full">
+          <Button
+            mt="4"
+            onPress={handleSubmit(onSubmit)}
+            rounded="full"
+            backgroundColor="#059669"
+          >
             Submit
           </Button>
         </VStack>
+        <HStack mt={10} mb={10} justifyContent="center">
+          <Image source={require("../../image/profile_img.png")} />
+        </HStack>
       </Box>
     </>
   );

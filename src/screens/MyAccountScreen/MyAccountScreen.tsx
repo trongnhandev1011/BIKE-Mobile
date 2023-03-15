@@ -1,27 +1,9 @@
-import {
-  Center,
-  Text,
-  Box,
-  HStack,
-  Avatar,
-  View,
-  Button,
-  Pressable,
-} from "native-base";
+import { Center, Text, Box, HStack, Avatar, View, Button } from "native-base";
 import { Image } from "react-native";
 import React from "react";
 import { User } from "../../types";
-import { AntDesign } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import { NavigationLabelComponent } from "../../components/NavigationLabel";
 import useAuth from "../../hooks/useAuth";
-
-// TODO
-// import backgroundImg from "../../../assets/BikeBackgroundImg.svg";
-// const convertImg = Image.resolveAssetSource(backgroundImg).uri.replace(
-//   "assets/",
-//   ""
-// );
 
 export type MyAccountScreenProps = {};
 
@@ -89,7 +71,7 @@ export default function MyAccountScreen() {
           rounded="lg"
         >
           <Button
-            backgroundColor="blue.600"
+            backgroundColor="#059669"
             width="100%"
             rounded="full"
             onPress={logout}
@@ -99,13 +81,9 @@ export default function MyAccountScreen() {
             </Text>
           </Button>
         </HStack>
-        {
-          //TODO:
-          /* <Image
-          source={{ uri: convertImg }}
-          style={{ width: 500, height: 500 }}
-        /> */
-        }
+        <HStack mt={20} mb={10} justifyContent="center">
+          <Image source={require("../../image/profile_img.png")} />
+        </HStack>
       </Box>
     </>
   );

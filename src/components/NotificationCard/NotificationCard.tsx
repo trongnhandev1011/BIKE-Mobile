@@ -24,12 +24,12 @@ const NotificationRequestCard: React.FC<Props> = ({
         backgroundColor="white"
         w="full"
         rounded="lg"
-        borderColor={notificationData.isRead ? "white" : "indigo.500"}
+        borderColor={notificationData.isRead ? "white" : "#33B565"}
         borderWidth="1"
       >
         <Flex direction="row">
           <Box>
-            <Avatar backgroundColor={"indigo.500"}>
+            <Avatar backgroundColor="#33B565">
               <MaterialCommunityIcons name="bell" size={24} color="white" />
             </Avatar>
           </Box>

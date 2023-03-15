@@ -6,11 +6,12 @@ import {
   Flex,
   Avatar,
   VStack,
+  HStack,
 } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
+import { Image } from "react-native";
 
 export type ActivityScreenProps = {};
 
@@ -30,7 +31,7 @@ export default function ActivityScreen() {
 
   return (
     <Box h="full" w="full" px="3" py="10">
-      <VStack space="4" w="full">
+      <VStack mt="10" space="4" w="full">
         {navElements.map((item, index) => (
           <Pressable
             key={index}
@@ -46,7 +47,7 @@ export default function ActivityScreen() {
             >
               <Flex direction="row">
                 <Box>
-                  <Avatar backgroundColor={"indigo.500"}>
+                  <Avatar backgroundColor="#33B565">
                     <MaterialCommunityIcons
                       name="motorbike"
                       size={24}
@@ -64,6 +65,12 @@ export default function ActivityScreen() {
           </Pressable>
         ))}
       </VStack>
+      <HStack justifyContent="center">
+        <Image
+          style={{ marginTop: 150 }}
+          source={require("../../image/two_way.png")}
+        />
+      </HStack>
     </Box>
   );
 }

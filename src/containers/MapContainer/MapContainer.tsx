@@ -116,7 +116,7 @@ const MapContainer = ({ tripId }: { tripId: number }) => {
         </MapView>
       ) : (
         <Center w="full" h="full">
-          <Center backgroundColor={"indigo.500"} rounded="full" h="56" w="56">
+          <Center backgroundColor="#33B565" rounded="full" h="56" w="56">
             <Entypo name="location" size={100} color="white" />
           </Center>
         </Center>

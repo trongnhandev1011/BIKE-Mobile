@@ -31,6 +31,7 @@ import { User } from "../../types";
 import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
 import moment from "moment";
 import { NotificationContext } from "../../containers/NotificationProvider/NotificationProvider";
+import { Image } from "react-native";
 
 export type PostDetailScreenProps = {};
 
@@ -203,7 +204,7 @@ export default function PostDetailScreen() {
           />
         </View>
         {checkIsOwner() ? (
-          <View>
+          <View mb={10}>
             <NavigationLabelComponent
               path="MyPickerPostListScreen"
               text="Applied Request"
@@ -220,6 +221,9 @@ export default function PostDetailScreen() {
                 </Text>
               </Button>
             </View>
+            <HStack justifyContent="center">
+              <Image source={require("../../image/location_map.png")} />
+            </HStack>
           </View>
         ) : (
           <View>

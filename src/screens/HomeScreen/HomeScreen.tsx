@@ -7,14 +7,13 @@ import { TripCardComponent, TripCardSkeleton } from "../../components/TripCard";
 import { useQuery } from "react-query";
 import { getCurrentTripAPI } from "../../services/backend/TripsController";
 import moment from "moment";
-import {
-  SimpleTrip,
-  TripDetail,
-} from "../../services/backend/TripsController/type";
+import { TripDetail } from "../../services/backend/TripsController/type";
 import _ from "lodash";
 import { getAllPostsAPI } from "../../services/backend/PostController";
 import HomeCardContainer from "../../containers/HomeCardContainer/HomeCardContainer";
 import { NotificationContext } from "../../containers/NotificationProvider/NotificationProvider";
+import useAuth from "../../hooks/useAuth";
+import { Rating } from "react-native-ratings";
 
 export type HomeScreenProps = {};
 
@@ -22,9 +21,10 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
   const navigation = useNavigation();
   const { data: postData } = useQuery(["homeScreenPost"], async () => {
     const res = (await getAllPostsAPI()).data;
-    console.log(res.data);
     return res.data;
   });
+
+  const { user } = useAuth();
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} px="3" pt="10" pb="6">
@@ -32,7 +32,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
       <Box mt="5">
         <CurrentTrip />
       </Box>
-      <Box mt="5">
+      <Box mt="2">
         <Text mb="2" fontWeight="bold">
           What do you want to do now?
         </Text>
@@ -56,8 +56,18 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
       <Text mt="6" fontWeight="bold">
         Your public post
       </Text>
-      <Box mt="4" mb="16" ml="4">
+      <Box mt="4" ml="4">
         {postData ? <HomeCardContainer postData={postData.items} /> : null}
+      </Box>
+      <Text mt="6" fontWeight="bold">
+        Your total rating
+      </Text>
+      <Box mt={2} mb={10}>
+        {user.averagePoint != null ? (
+          <Rating ratingCount={user.averagePoint} />
+        ) : (
+          <Text>You haven't received any rating yet!</Text>
+        )}
       </Box>
     </ScrollView>
   );

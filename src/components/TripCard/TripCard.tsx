@@ -17,7 +17,7 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
       <Box px="4" py="3.5" backgroundColor="white" w="full" rounded="lg">
         <Flex direction="row">
           <Box>
-            <Avatar backgroundColor={"indigo.500"}>
+            <Avatar backgroundColor="#33B565">
               <MaterialCommunityIcons
                 name={
                   tripData?.role === "PASSENGER"
