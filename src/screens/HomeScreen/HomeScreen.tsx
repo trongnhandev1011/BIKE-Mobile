@@ -1,14 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import { Box, ScrollView, Text, Flex } from "native-base";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { HomeHeaderContainer } from "../../containers/HomeHeader";
 import { CardActionComponent } from "../../components/CardAction";
 import { TripCardComponent, TripCardSkeleton } from "../../components/TripCard";
 import { useQuery } from "react-query";
 import { getCurrentTripAPI } from "../../services/backend/TripsController";
 import moment from "moment";
-import { SimpleTrip } from "../../services/backend/TripsController/type";
+import {
+  SimpleTrip,
+  TripDetail,
+} from "../../services/backend/TripsController/type";
 import _ from "lodash";
+import { NotificationContext } from "../../containers/NotificationProvider/NotificationProvider";
 
 export type HomeScreenProps = {};
 
@@ -49,20 +53,29 @@ function CurrentTrip() {
     isLoading,
     data: res,
     error,
+    refetch,
   } = useQuery("currentTrip", async () => {
     return (await getCurrentTripAPI()).data;
   });
 
-  const mapperHandler = (data: SimpleTrip) => {
+  const { notification } = useContext(NotificationContext);
+
+  useEffect(() => {
+    refetch();
+  }, [notification]);
+
+  const mapperHandler = (data: TripDetail) => {
     console.log(data);
     return {
-      toLocation: data?.startStation,
-      fromLocation: data?.endStation,
+      toLocation: data?.startStation?.name,
+      fromLocation: data?.endStation?.name,
       startAt: data?.startAt
         ? moment(data?.startAt).format("h:mm a - DD/MM/YYYY")
         : "",
     };
   };
+
+  console.log(res);
 
   //@ts-ignore
   if (
@@ -84,7 +97,7 @@ function CurrentTrip() {
             onPress={() => {
               //TODO: navigate to trip detail screen later
             }}
-            tripData={mapperHandler(res.data)}
+            tripData={mapperHandler(res?.data)}
           />
         )}
       </Box>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, createContext } from "react";
 import * as Notifications from "expo-notifications";
 import registerForPushNotificationsAsync from "../../services/notificationService/registerForPushNotifcation";
 import useAuth from "../../hooks/useAuth";
+import { useNavigation } from "@react-navigation/native";
 
 interface INotificationProviderProps {
   children: any;
@@ -9,8 +10,10 @@ interface INotificationProviderProps {
 
 export const NotificationContext = createContext<{
   expoPushToken: string | null;
+  notification: any;
 }>({
   expoPushToken: null,
+  notification: null,
 });
 
 Notifications.setNotificationHandler({
@@ -24,6 +27,7 @@ Notifications.setNotificationHandler({
 export default function NotificationProvider({
   children,
 }: INotificationProviderProps) {
+  const navigation = useNavigation();
   const [notification, setNotification] = useState({});
   const [expoPushToken, setExpoPushToken] = useState("");
 
@@ -48,7 +52,9 @@ export default function NotificationProvider({
 
   return (
     <>
-      <NotificationContext.Provider value={{ expoPushToken: expoPushToken }}>
+      <NotificationContext.Provider
+        value={{ expoPushToken: expoPushToken, notification }}
+      >
         {children}
       </NotificationContext.Provider>
     </>

@@ -19,6 +19,7 @@ import { InfiniteList } from "../../components/InfiniteList";
 import { getAllPostsAPI } from "../../services/backend/PostController";
 import { SimplePost } from "../../services/backend/PostController/type";
 import { UserRoleConstants } from "../../constants/UserRoleConstants";
+import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
 import { CustomizedDateTimePicker } from "../../containers/CustomizedDateTimePicker";
 import { AppLoading } from "../../components/AppLoading";
 
@@ -41,13 +42,14 @@ const FilterModalContext = createContext<{
 });
 
 export default function MyPostListScreen() {
+  const { setErrorMsg } = useContext(ErrorContext);
   const navigation = useNavigation();
   const [isOpenModal, setOpenModal] = useState(false);
   const [queryKey, setQueryKey] = useState({
     role: undefined,
     startFrom: undefined,
     startTo: undefined,
-    query: "",
+    query: undefined,
   });
   const {
     isLoading,
@@ -56,6 +58,8 @@ export default function MyPostListScreen() {
     fetchNextPage,
     isRefetching,
     refetch,
+    error,
+    isError,
   } = useInfiniteQuery(
     [queryKey, "myPosts"],
     async ({ pageParam = 1, queryKey }) => {
@@ -64,7 +68,7 @@ export default function MyPostListScreen() {
         role: undefined,
         startFrom: undefined,
         startTo: undefined,
-        query: "",
+        query: undefined,
       };
       const res = (
         await getAllPostsAPI(pageParam, 10, {
@@ -74,6 +78,9 @@ export default function MyPostListScreen() {
           startTo: startFrom ? moment(startTo).toISOString() : undefined,
         })
       ).data;
+      if (res.code !== 0) {
+        throw res;
+      }
       return res.data;
     },
     {
@@ -86,6 +93,15 @@ export default function MyPostListScreen() {
       },
     }
   );
+
+  if (isError) {
+    const e = error as any;
+    setErrorMsg({
+      code: e?.code ?? -1,
+      message: e?.message ?? "Unexpected error. Please try again later.",
+    });
+    navigation.goBack();
+  }
 
   const mapperHandler = (data: SimplePost) => {
     return {
@@ -101,11 +117,13 @@ export default function MyPostListScreen() {
     };
   };
 
-  useFocusEffect(() => {
-    refetch();
-  });
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      refetch();
+    });
 
-  if (isLoading) return <AppLoading />;
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <>
@@ -228,7 +246,7 @@ function FilterModal() {
                 }}
               />
             )}
-            defaultValue={moment(Date.now()).utc()}
+            defaultValue={moment(Date.now()).utcOffset()}
             name="startFrom"
           />
           <FormItem
@@ -242,7 +260,7 @@ function FilterModal() {
                 }}
               />
             )}
-            defaultValue={moment(Date.now()).utc()}
+            defaultValue={moment(Date.now()).add(100, "year").utc()}
             name="startTo"
           />
         </Modal.Body>

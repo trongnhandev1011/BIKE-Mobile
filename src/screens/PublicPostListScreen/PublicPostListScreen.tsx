@@ -16,14 +16,12 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import { FormItem } from "../../containers/FormItem";
 import { InfiniteList } from "../../components/InfiniteList";
-import {
-  getAllPostsAPI,
-  getAllPublicPostsAPI,
-} from "../../services/backend/PostController";
+import { getAllPublicPostsAPI } from "../../services/backend/PostController";
 import { SimplePost } from "../../services/backend/PostController/type";
 import { UserRoleConstants } from "../../constants/UserRoleConstants";
 import { CustomizedDateTimePicker } from "../../containers/CustomizedDateTimePicker";
 import { AppLoading } from "../../components/AppLoading";
+import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
 
 export type PublicPostListScreenProps = {};
 
@@ -46,11 +44,12 @@ const FilterModalContext = createContext<{
 export default function PublicPostListScreen() {
   const navigation = useNavigation();
   const [isOpenModal, setOpenModal] = useState(false);
+  const { setErrorMsg } = useContext(ErrorContext);
   const [queryKey, setQueryKey] = useState({
     role: undefined,
     startFrom: undefined,
     startTo: undefined,
-    query: "",
+    query: undefined,
   });
   const {
     isLoading,
@@ -58,6 +57,8 @@ export default function PublicPostListScreen() {
     data: postData,
     hasNextPage,
     fetchNextPage,
+    isError,
+    error,
   } = useInfiniteQuery(
     [queryKey, "publicPosts"],
     async ({ pageParam = 1, queryKey }) => {
@@ -65,7 +66,7 @@ export default function PublicPostListScreen() {
         role: undefined,
         startFrom: undefined,
         startTo: undefined,
-        query: "",
+        query: undefined,
       };
       const res = (
         await getAllPublicPostsAPI(pageParam, 10, {
@@ -75,6 +76,9 @@ export default function PublicPostListScreen() {
           startTo: startFrom ? moment(startTo).toISOString() : undefined,
         })
       ).data;
+      if (res.code !== 0) {
+        throw res;
+      }
       return res.data;
     },
     {
@@ -88,6 +92,15 @@ export default function PublicPostListScreen() {
     }
   );
 
+  if (isError) {
+    const e = error as any;
+    setErrorMsg({
+      code: e?.code ?? -1,
+      message: e?.message ?? "Unexpected error. Please try again later.",
+    });
+    navigation.goBack();
+  }
+
   const mapperHandler = (data: SimplePost) => {
     return {
       toLocation: data.startStation,
@@ -100,11 +113,13 @@ export default function PublicPostListScreen() {
     };
   };
 
-  useFocusEffect(() => {
-    refetch();
-  });
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      refetch();
+    });
 
-  if (isLoading) return <AppLoading />;
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <>
@@ -227,7 +242,7 @@ function FilterModal() {
                 }}
               />
             )}
-            defaultValue={moment(Date.now()).utc()}
+            defaultValue={moment(Date.now()).utcOffset()}
             name="startFrom"
           />
           <FormItem
@@ -241,7 +256,7 @@ function FilterModal() {
                 }}
               />
             )}
-            defaultValue={moment(Date.now()).utc()}
+            defaultValue={moment(Date.now()).add(100, "year").utc()}
             name="startTo"
           />
         </Modal.Body>

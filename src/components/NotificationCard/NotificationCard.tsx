@@ -33,7 +33,7 @@ const NotificationRequestCard: React.FC<Props> = ({
               <MaterialCommunityIcons name="bell" size={24} color="white" />
             </Avatar>
           </Box>
-          <Box marginLeft={4} w="full">
+          <Box ml="4" w="full">
             <DescriptionLine
               fontWeight="semibold"
               title="Title"
@@ -51,7 +51,7 @@ const NotificationRequestCard: React.FC<Props> = ({
             <Text
               color="grey"
               fontSize="sm"
-              flex="row"
+              display="flex"
               flexWrap="wrap"
               maxW="4/5"
             >

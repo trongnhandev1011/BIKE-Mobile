@@ -14,13 +14,14 @@ import { useInfiniteQuery } from "react-query";
 import { TripCardComponent, TripCardSkeleton } from "../../components/TripCard";
 import moment from "moment";
 import { SimpleTrip } from "../../services/backend/TripsController/type";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import { FormItem } from "../../containers/FormItem";
 import { InfiniteList } from "../../components/InfiniteList";
 import { TripStatusConstants } from "../../constants/TripStatusConstants";
 import { CustomizedDateTimePicker } from "../../containers/CustomizedDateTimePicker";
 import { AppLoading } from "../../components/AppLoading";
+import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
 
 export type MyTripListScreenProps = {};
 
@@ -41,13 +42,14 @@ const FilterModalContext = createContext<{
 });
 
 export default function MyTripListScreen() {
+  const { setErrorMsg } = useContext(ErrorContext);
   const navigation = useNavigation();
   const [isOpenModal, setOpenModal] = useState(false);
   const [queryKey, setQueryKey] = useState({
     status: undefined,
     startFrom: undefined,
     startTo: undefined,
-    query: "",
+    query: undefined,
   });
   const {
     isLoading,
@@ -56,6 +58,8 @@ export default function MyTripListScreen() {
     refetch,
     hasNextPage,
     fetchNextPage,
+    isError,
+    error,
   } = useInfiniteQuery(
     [queryKey, "myTrips"],
     async ({ pageParam = 1, queryKey }) => {
@@ -63,9 +67,9 @@ export default function MyTripListScreen() {
         status: undefined,
         startFrom: undefined,
         startTo: undefined,
-        query: "",
+        query: undefined,
       };
-
+      console.log(queryKey?.[0]);
       const res = (
         await getAllTripsAPI(pageParam, 10, {
           status: status ? status : undefined,
@@ -74,6 +78,10 @@ export default function MyTripListScreen() {
           startTo: startFrom ? moment(startTo).toISOString() : undefined,
         })
       ).data;
+      console.log(res);
+      if (res.code !== 0) {
+        throw res;
+      }
       return res.data;
     },
     {
@@ -87,6 +95,15 @@ export default function MyTripListScreen() {
     }
   );
 
+  if (isError) {
+    const e = error as any;
+    setErrorMsg({
+      code: e?.code ?? -1,
+      message: e?.message ?? "Unexpected error. Please try again later.",
+    });
+    navigation.goBack();
+  }
+
   const mapperHandler = (data: SimpleTrip) => {
     return {
       toLocation: data.startStation,
@@ -98,11 +115,13 @@ export default function MyTripListScreen() {
     };
   };
 
-  useFocusEffect(() => {
-    refetch();
-  });
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      refetch();
+    });
 
-  if (isLoading) return <AppLoading />;
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <>
@@ -225,7 +244,7 @@ function FilterModal() {
                 }}
               />
             )}
-            defaultValue={moment(Date.now()).utc()}
+            defaultValue={moment(Date.now()).utcOffset()}
             name="startFrom"
           />
           <FormItem
@@ -239,7 +258,7 @@ function FilterModal() {
                 }}
               />
             )}
-            defaultValue={moment(Date.now()).utc()}
+            defaultValue={moment(Date.now()).add(100, "year").utc()}
             name="startTo"
           />
         </Modal.Body>

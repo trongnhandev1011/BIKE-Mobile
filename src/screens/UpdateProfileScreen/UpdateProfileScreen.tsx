@@ -9,7 +9,7 @@ import {
   Input,
 } from "native-base";
 import { Image } from "react-native";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { NavigationLabelComponent } from "../../components/NavigationLabel";
 import { updateProfile } from "../../services/backend/AuthController/index";
 import useAuth from "../../hooks/useAuth";
@@ -17,10 +17,12 @@ import { useNavigation } from "@react-navigation/native";
 import { User } from "../../types";
 import { uploadImage } from "../../utils/ImageUtils";
 import { UpdateProfileData } from "../../types";
+import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
 
 export type UpdateProfileScreenProps = {};
 
 const UpdateProfileScreen = () => {
+  const { setErrorMsg } = useContext(ErrorContext);
   const {
     user,
     action: { updateProfileHandler },
@@ -63,9 +65,19 @@ const UpdateProfileScreen = () => {
       if (result.data.success) {
         updateProfileHandler();
         setLoading(false);
+      } else {
+        setErrorMsg({
+          code: result?.code ?? -1,
+          message:
+            result?.message ?? "Unexpected error. Please try again later.",
+        });
       }
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      setErrorMsg({
+        code: -1,
+        message: e?.message ?? "Unexpected error. Please try again later.",
+      });
     } finally {
       navigation.goBack();
     }
@@ -93,7 +105,7 @@ const UpdateProfileScreen = () => {
             optionalData={setFormField}
           />
         ))}
-        <View backgroundColor="white" mt="6" p="3" borderRadius="20">
+        <View backgroundColor="white" mt="6" p="3" rounded="lg">
           <Text fontSize="xl" bold mb="3">
             Your new information:
           </Text>
@@ -154,7 +166,7 @@ const UpdateProfileScreen = () => {
           mt="4"
           isLoading={loading}
           onPress={() => updateUserProfile()}
-          borderRadius="20"
+          rounded="lg"
         >
           Save
         </Button>

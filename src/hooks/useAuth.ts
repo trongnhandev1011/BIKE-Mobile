@@ -1,13 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   AuthenticationState,
   setUser,
 } from "../redux/authentication/authentication.slice";
 import { login, logout } from "../redux/authentication/authentication.action";
 import { RootState, useAppDispatch, useAppSelector } from "../redux/store";
-import { User } from "../types";
-import { AnyAction } from "@reduxjs/toolkit";
 import { getAuthenticatedUserAPI } from "../services/backend/AuthController";
 
 export default function useAuth({

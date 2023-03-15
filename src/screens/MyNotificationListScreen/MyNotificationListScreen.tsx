@@ -51,6 +51,7 @@ const FilterModalContext = createContext<{
 });
 
 export default function MyNotificationListScreen() {
+  const navigation = useNavigation();
   const [queryKey, setQueryKey] = useState({ role: undefined });
   const {
     isLoading,
@@ -77,11 +78,13 @@ export default function MyNotificationListScreen() {
     }
   );
 
-  useFocusEffect(() => {
-    refetch();
-  });
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      refetch();
+    });
 
-  if (isLoading) return <AppLoading />;
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <>

@@ -1,11 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as SecureStore from "expo-secure-store";
-import Constants from "expo-constants";
 import {
   getAuthenticatedUserAPI,
   loginAPI,
   logoutAPI,
-  refreshTokenAPI,
 } from "../../services/backend/AuthController";
 import { setAuthToken } from "../../services/backend/axiosClient";
 import StoreKeyConstants from "../../constants/StoreKeyConstants";
@@ -66,11 +64,15 @@ export const login = createAsyncThunk<{ user: object }, { authCode: string }>(
       } = await getAuthenticatedUserAPI();
       const expoToken = await registerForPushNotificationsAsync();
       if (expoToken) {
-        const {
-          data: { data },
-        } = await addMyExpoToken(expoToken);
+        try {
+          const {
+            data: { data },
+          } = await addMyExpoToken(expoToken);
 
-        if (!data.success) console.log("Can't add expo token to BE");
+          if (!data.success) console.log("Can't add expo token to BE");
+        } catch (e) {
+          console.log(e);
+        }
       } else console.log("Can't get expo token");
       return { user: userData };
     } catch (error: any) {

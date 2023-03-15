@@ -1,11 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import { Box, Button, Center, ScrollView } from "native-base";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { ResultCardComponent } from "../../components/ResultCard";
 import { CreatePostForm } from "../../containers/CreatePostForm";
 
 export default function CreatePostScreen() {
   const [isSuccess, setSuccess] = useState<boolean | null>(null);
+  const createResult = useRef<any>(null);
   const navigation = useNavigation();
 
   return (
@@ -21,7 +22,8 @@ export default function CreatePostScreen() {
               description={
                 isSuccess
                   ? "Thank You! Your post has been created successfully. You can go to post list to track the post progress!"
-                  : "Failed to create post, please try again later!"
+                  : createResult?.current?.message ??
+                    "Failed to create post, please try again later!"
               }
               buttons={
                 <>
@@ -56,7 +58,12 @@ export default function CreatePostScreen() {
           </Center>
         ) : (
           <Box mb="12">
-            <CreatePostForm handlePostSubmit={(result) => setSuccess(result)} />
+            <CreatePostForm
+              handlePostSubmit={(result, data) => {
+                createResult.current = data;
+                setSuccess(result);
+              }}
+            />
           </Box>
         )}
       </ScrollView>

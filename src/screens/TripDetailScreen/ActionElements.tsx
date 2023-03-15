@@ -1,5 +1,6 @@
-import { Button, Modal } from "native-base";
-import { useState } from "react";
+import { Button, Modal, VStack } from "native-base";
+import { useContext, useState } from "react";
+import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
 import { FeedbackFormContainer } from "../../containers/FeedbackForm";
 import { updateTripStatusAPI } from "../../services/backend/TripsController";
 import { TripDetail } from "../../services/backend/TripsController/type";
@@ -38,14 +39,23 @@ export const TripActionForPassenger = ({
   tripData: TripDetail;
   refetchData: any;
 }) => {
-  console.log(tripData.status);
+  const { setErrorMsg } = useContext(ErrorContext);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const updateStatus = (tripId: number, status: string) => async () => {
     try {
       const res = await updateTripStatusAPI(tripId, status);
-      if (res.data.code != 0) throw res;
+      if (res.data.code != 0) {
+        setErrorMsg({
+          code: res.data.code,
+          message: res.data.message,
+        });
+      }
     } catch (e) {
       console.log(e);
+      setErrorMsg({
+        code: -1,
+        message: e?.message ?? "Unexpected error. Please try again later.",
+      });
     } finally {
       refetchData();
     }
@@ -74,9 +84,27 @@ export const TripActionForPassenger = ({
         </>
       );
       break;
-    default:
-      action = updateStatus(tripData.id, "CANCEL");
-      Component = (props: any) => <Button {...props}>Cancel trip</Button>;
+    case "CREATED":
+      action = updateStatus(tripData.id, "START");
+      Component = (props: any) => (
+        <VStack space={4}>
+          <Button rounded="full" onPress={updateStatus(tripData.id, "START")}>
+            Start trip
+          </Button>
+          <Button
+            rounded="full"
+            variant="outline"
+            onPress={updateStatus(tripData.id, "CANCEL")}
+          >
+            Cancel trip
+          </Button>
+        </VStack>
+      );
+      break;
+    case "ON_GOING":
+      action = updateStatus(tripData.id, "FINISH");
+      Component = (props: any) => <Button {...props}>End trip</Button>;
+      break;
   }
 
   return <Component rounded="full" onPress={action} />;
@@ -89,12 +117,24 @@ export const TripActionForBiker = ({
   tripData: TripDetail;
   refetchData: any;
 }) => {
+  const { setErrorMsg } = useContext(ErrorContext);
   const updateStatus = (tripId: number, status: string) => async () => {
+    console.log("test");
     try {
       const res = await updateTripStatusAPI(tripId, status);
-      if (res.data.code != 0) throw res;
+      if (res.data.code != 0) {
+        setErrorMsg({
+          code: res.data.code,
+          message: res.data.message,
+        });
+      }
+      console.log(res);
     } catch (e) {
       console.log(e);
+      setErrorMsg({
+        code: -1,
+        message: "Unexpected error. Please try again later.",
+      });
     } finally {
       refetchData();
     }
@@ -104,7 +144,20 @@ export const TripActionForBiker = ({
   switch (tripData.status) {
     case "CREATED":
       action = updateStatus(tripData.id, "START");
-      Component = (props: any) => <Button {...props}>Start trip</Button>;
+      Component = (props: any) => (
+        <VStack space={4}>
+          <Button rounded="full" onPress={updateStatus(tripData.id, "START")}>
+            Start trip
+          </Button>
+          <Button
+            rounded="full"
+            variant="outline"
+            onPress={updateStatus(tripData.id, "CANCEL")}
+          >
+            Cancel trip
+          </Button>
+        </VStack>
+      );
       break;
     case "ON_GOING":
       action = updateStatus(tripData.id, "FINISH");

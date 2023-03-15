@@ -33,7 +33,7 @@ const PostRequestCard = ({ user, navigate }: PostRequestCardProps) => {
         backgroundColor="white"
         p="4"
         mt="3"
-        borderRadius={30}
+        rounded="lg"
         alignItems="center"
       >
         <Image
