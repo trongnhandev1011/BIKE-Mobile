@@ -14,7 +14,7 @@ type CardAction = {
 export default function CardAction({ image, title, onPress }: CardAction) {
   return (
     <Pressable onPress={onPress}>
-      <Center backgroundColor="white" rounded="xl" p="4" shadow="3">
+      <Center backgroundColor="white" rounded="xl" p="6" shadow="3">
         <Box rounded="full">
           <Image
             rounded="full"
