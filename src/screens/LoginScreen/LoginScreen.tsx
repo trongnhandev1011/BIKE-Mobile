@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Box, Heading, VStack, Center, Button } from "native-base";
 import * as WebBrowser from "expo-web-browser";
 import useAuth from "../../hooks/useAuth";
 import * as Google from "expo-auth-session/providers/google";
+import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -30,6 +31,8 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
     },
   });
 
+  const { setErrorMsg } = useContext(ErrorContext);
+
   useEffect(() => {
     if (response?.type === "success") {
       const { authentication, params } = response;
@@ -38,6 +41,15 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
       login({ authCode: params.code });
     }
   }, [response]);
+
+  useEffect(() => {
+    if (code === "ERROR") {
+      setErrorMsg({
+        code: -1,
+        message: "Login failed",
+      });
+    }
+  }, [code]);
 
   return (
     <Center w="full" h="full" backgroundColor="white">

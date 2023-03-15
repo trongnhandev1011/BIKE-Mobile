@@ -4,7 +4,7 @@ const CreatePostFormRules = {
   endStationId: { required: "Field is required" },
   startTime: undefined,
   title: undefined,
-  description: undefined,
+  description: { required: "Field is required" },
 };
 
 export default CreatePostFormRules;

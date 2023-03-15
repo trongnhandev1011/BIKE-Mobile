@@ -1,5 +1,5 @@
-import { Box, Button, Input, Select, VStack } from "native-base";
-import React, { useState } from "react";
+import { Box, Button, Input, Select, Text, VStack } from "native-base";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import moment from "moment";
 import { CustomizedDateTimePicker } from "../CustomizedDateTimePicker";
@@ -12,6 +12,8 @@ import CreatePostFormRules from "./CreatePostForm.rules";
 import { FormItem } from "../FormItem";
 import { CreatePost } from "../../services/backend/PostController/type";
 import { createPostAPI } from "../../services/backend/PostController";
+import { ErrorContext } from "../ErrorProvider/ErrorProvider";
+import { useNavigation } from "@react-navigation/native";
 
 const defaultFormStyle: {
   fontSize: string;
@@ -32,26 +34,34 @@ export default function CreatePostForm({
 }: {
   handlePostSubmit?: (result: boolean, data: any) => void;
 }) {
-  const [queryKey, setQueryKey] = useState(null);
-  const { isLoading, data: stationData } = useQuery(
-    ["fromStations"],
-    async () => {
-      const res = (await getAllStationsAPI()).data;
-      if (res.code != 0) throw new Error("Invalid respnose");
-      return res;
+  const navigation = useNavigation();
+  const [queryKey, setQueryKey] = useState<string | null>(null);
+  const { setErrorMsg } = useContext(ErrorContext);
+  const {
+    isLoading,
+    data: stationData,
+    isError: isFromStationError,
+  } = useQuery(["fromStations"], async () => {
+    const res = (await getAllStationsAPI()).data;
+    if (res.code != 0) {
+      throw res;
     }
-  );
-  const { data: toStationData } = useQuery(
-    [queryKey, "toStations"],
-    async ({ queryKey }) => {
-      const fromStation = queryKey?.[0];
-      if (fromStation == null) return { data: { items: [] } };
+    return res;
+  });
+  const {
+    data: toStationData,
+    isError: isToStationError,
+    error,
+  } = useQuery([queryKey, "toStations"], async ({ queryKey }) => {
+    const fromStation = queryKey?.[0];
+    if (fromStation == null) return { data: { items: [] } };
 
-      const res = (await getAllStationsAPI(fromStation)).data;
-      if (res.code != 0) throw new Error("Invalid respnose");
-      return res;
+    const res = (await getAllStationsAPI(Number(fromStation))).data;
+    if (res.code != 0) {
+      throw res;
     }
-  );
+    return res;
+  });
   const {
     control,
     handleSubmit,
@@ -60,16 +70,34 @@ export default function CreatePostForm({
   const onSubmit = async (data: CreatePost | any) => {
     //TODO: call API to submit
     let result = false;
+    let res: any = null;
     try {
-      const res = (await createPostAPI(data)).data;
+      res = (await createPostAPI(data)).data;
       if (res.code === 0) result = true;
       console.log(res.data);
     } catch (e) {
       console.log(e);
       //ignore
     }
-    handlePostSubmit && handlePostSubmit(result, data);
+    handlePostSubmit && handlePostSubmit(result, res);
   };
+
+  if (isFromStationError) {
+    setErrorMsg({
+      code: -1,
+      message: "Unexpected error. Please try again later.",
+    });
+    navigation.goBack();
+  }
+
+  if (isToStationError) {
+    const e = error as any;
+    setErrorMsg({
+      code: e?.code ?? -1,
+      message: e?.message ?? "Unexpected error. Please pick again.",
+    });
+    setQueryKey(null);
+  }
 
   if (isLoading) return <AppLoading />;
 

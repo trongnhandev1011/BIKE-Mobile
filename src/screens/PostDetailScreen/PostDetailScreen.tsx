@@ -14,7 +14,7 @@ import {
   Button,
   ScrollView,
 } from "native-base";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { NavigationLabelComponent } from "../../components/NavigationLabel";
 import { cancelPost } from "../../services/backend/PostController";
 import { DescriptionLine } from "../../components/DescriptionLine";
@@ -28,6 +28,9 @@ import { PostDetail } from "../../services/backend/PostController/type";
 import { AppLoading } from "../../components/AppLoading";
 import useAuth from "../../hooks/useAuth";
 import { User } from "../../types";
+import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
+import moment from "moment";
+import { NotificationContext } from "../../containers/NotificationProvider/NotificationProvider";
 
 export type PostDetailScreenProps = {};
 
@@ -43,12 +46,14 @@ const getTripInformation = (postData: PostDetail | undefined) => {
     },
     {
       title: "Start at",
-      description: postData?.startTime ?? "",
+      description: postData?.startTime
+        ? moment(postData?.startTime).format("h:mm a - DD/MM/YYYY")
+        : "",
     },
   ];
 };
 
-const getProfileInformation = (user: User | {}) => {
+const getProfileInformation = (user: User) => {
   return [
     {
       title: "Name",
@@ -66,6 +71,7 @@ const getProfileInformation = (user: User | {}) => {
 };
 
 export default function PostDetailScreen() {
+  const { setErrorMsg } = useContext(ErrorContext);
   const route = useRoute();
   const params = route?.params as { postId: number };
   const postId = params?.postId;
@@ -77,11 +83,22 @@ export default function PostDetailScreen() {
     isRefetching,
     data: res,
     refetch,
+    isError,
+    error,
   } = useQuery(["postDetail", params.postId], async () => {
     const result = (await getPostDetail(postId))?.data;
+    if (result.code !== 0) {
+      throw result;
+    }
 
     return result;
   });
+
+  const { notification } = useContext(NotificationContext);
+
+  useEffect(() => {
+    refetch();
+  }, [notification]);
 
   const checkIsOwner = () => res?.data?.author?.id === user.id;
 
@@ -92,6 +109,12 @@ export default function PostDetailScreen() {
   const cancelPostHandler = async () => {
     try {
       const { data: result } = await cancelPost(postId);
+      if (result.code !== 0) {
+        setErrorMsg({
+          code: result.code,
+          message: result.message,
+        });
+      }
       navigation.goBack();
       return result.data;
     } catch (e) {
@@ -105,7 +128,13 @@ export default function PostDetailScreen() {
         action === "CANCEL"
           ? await cancelApplyPost(postId)
           : await applyPost(postId);
-      if (result.data.success) {
+      if (result.code) {
+        setErrorMsg({
+          code: result?.code,
+          message: result?.message,
+        });
+      }
+      if (result?.data?.success) {
         refetch();
       }
     } catch (e) {
@@ -113,9 +142,22 @@ export default function PostDetailScreen() {
     }
   };
 
-  useFocusEffect(() => {
-    refetch();
-  });
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      refetch();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  if (isError) {
+    const e = error as any;
+    setErrorMsg({
+      code: e?.code ?? -1,
+      message: e?.message ?? "Unexpected error. Please try again later.",
+    });
+    navigation.goBack();
+  }
 
   if (isLoading) return <AppLoading />;
 
@@ -125,7 +167,7 @@ export default function PostDetailScreen() {
         <HStack
           backgroundColor="white"
           alignItems="center"
-          borderRadius="30"
+          rounded="lg"
           padding={3}
         >
           <Avatar bg="green.500" mr="5" size="lg" />
@@ -142,7 +184,7 @@ export default function PostDetailScreen() {
             />
           </View>
         </HStack>
-        <View padding={3} backgroundColor="white" borderRadius="10" mt={4}>
+        <View padding={3} backgroundColor="white" rounded="md" mt={4}>
           <Text fontSize="2xl" bold mb="3">
             General information
           </Text>
@@ -167,10 +209,10 @@ export default function PostDetailScreen() {
               text="Applied Request"
               optionalData={{ postId }}
             />
-            <View backgroundColor="white" mt="3" p="3" borderRadius={20}>
+            <View backgroundColor="white" mt="3" p="3" rounded="lg">
               <Button
                 onPress={() => cancelPostHandler()}
-                borderRadius={30}
+                rounded="full"
                 backgroundColor="#059669"
               >
                 <Text color="white" bold>
@@ -181,30 +223,34 @@ export default function PostDetailScreen() {
           </View>
         ) : (
           <View>
-            <View padding={3} backgroundColor="white" borderRadius="10" mt={4}>
+            <View padding={3} backgroundColor="white" rounded="lg" mt={4}>
               <Text fontSize="2xl" bold mb="3">
                 Partner information
               </Text>
               <VStack space={1}>
                 {getProfileInformation(res?.data?.author).map((data) => (
                   <DescriptionLine
-                    title={data.title}
-                    description={data.description}
+                    title={data?.title}
+                    description={data?.description ?? ""}
                   />
                 ))}
               </VStack>
             </View>
-            <View backgroundColor="white" mt="3" p="3" borderRadius={20}>
-              <Button
-                onPress={() => applyAction(checkIsApply() ? "CANCEL" : "APPLY")}
-                borderRadius={30}
-                backgroundColor={checkIsApply() ? "#ED4337" : "#059669"}
-              >
-                <Text color="white" bold>
-                  {checkIsApply() ? "Cancel apply" : "Apply this post"}
-                </Text>
-              </Button>
-            </View>
+            {res?.data?.status !== "COMPLETED" ? (
+              <View backgroundColor="white" mt="3" p="3" rounded="lg">
+                <Button
+                  onPress={() =>
+                    applyAction(checkIsApply() ? "CANCEL" : "APPLY")
+                  }
+                  rounded="full"
+                  backgroundColor={checkIsApply() ? "#ED4337" : "#059669"}
+                >
+                  <Text color="white" bold>
+                    {checkIsApply() ? "Cancel apply" : "Apply this post"}
+                  </Text>
+                </Button>
+              </View>
+            ) : null}
           </View>
         )}
       </Box>

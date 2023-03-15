@@ -8,7 +8,7 @@ import {
   View,
   VStack,
 } from "native-base";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
 import * as ImagePicker from "expo-image-picker";
@@ -25,6 +25,8 @@ import {
 import { Vehicle } from "../../services/backend/UserController/type";
 import { uploadImage } from "../../services/backend/AuthController";
 import { Image } from "react-native";
+import { ErrorContext } from "../ErrorProvider/ErrorProvider";
+import { useNavigation } from "@react-navigation/native";
 
 export default function UpdateVehicleForm({
   handlePostSubmit,
@@ -33,15 +35,26 @@ export default function UpdateVehicleForm({
   handlePostSubmit?: (result: boolean, data: any) => void;
   isCreateNew?: boolean;
 }) {
+  const navigation = useNavigation();
+  const { setErrorMsg } = useContext(ErrorContext);
   const {
     control,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
-  const { isLoading, data: vehicleData } = useQuery("myVehicle", async () => {
+  const {
+    isLoading,
+    data: vehicleData,
+    isError,
+    error,
+  } = useQuery("myVehicle", async () => {
     const res = (await getMyVehicleAPI()).data;
-    if (res.code != 0) throw new Error("Invalid respnose");
+    console.log(res);
+    if (res.code === 61) {
+      return null;
+    }
+    if (res.code != 0) throw res;
     Object.keys(res.data).forEach((key) => {
       setValue(key, `${res?.data?.[key]}`);
     });
@@ -53,24 +66,51 @@ export default function UpdateVehicleForm({
     console.log(data);
     try {
       //TODO:update image first
-      const resImage = (await uploadImage(data.image)).data;
-      console.log(resImage);
-      if (resImage.code !== 0) throw new Error("Failed to upload file");
+      let resImage: any = null;
+      try {
+        resImage = (await uploadImage(data.image)).data;
+        if (resImage?.code !== 0) throw resImage;
+      } catch (e: any) {
+        setErrorMsg({
+          code: e?.code ?? -1,
+          message: e?.message ?? "Unable to upload image. Please try again.",
+        });
+        return;
+      }
       let res = undefined;
       if (vehicleData === null) {
-        res = (await createMyVehicleAPI({ ...data, image: resImage.data.path }))
-          .data;
+        res = (
+          await createMyVehicleAPI({ ...data, image: resImage?.data?.path })
+        )?.data;
       } else {
-        res = (await updateMyVehicleAPI({ ...data, image: resImage.data.path }))
-          .data;
+        res = (
+          await updateMyVehicleAPI({ ...data, image: resImage?.data?.path })
+        )?.data;
       }
-      if (res.code === 0) result = true;
+      console.log(res);
+      if (res?.code === 0) result = true;
+      else {
+        result = false;
+        setErrorMsg({
+          code: res?.code ?? -1,
+          message: res?.message ?? "Unexpected error. Please try again later.",
+        });
+      }
     } catch (e) {
       console.log(e);
       //ignore
     }
     handlePostSubmit && handlePostSubmit(result, data);
   };
+
+  if (isError) {
+    const e = error as any;
+    setErrorMsg({
+      code: e?.code ?? -1,
+      message: e?.message ?? "Unexpected error. Please try again later.",
+    });
+    navigation.goBack();
+  }
 
   if (isLoading) return <AppLoading />;
 

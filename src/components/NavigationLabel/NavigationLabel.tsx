@@ -27,7 +27,7 @@ const NavigationLabel = ({
           mt="6"
           backgroundColor="white"
           p="3"
-          borderRadius="20"
+          rounded="lg"
         >
           <Text fontSize="lg">{text}</Text>
           <AntDesign name="caretright" size={20} color="black" />

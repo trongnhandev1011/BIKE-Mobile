@@ -42,7 +42,7 @@ export default function MyAccountScreen() {
           mt="10"
           backgroundColor="white"
           p={3}
-          borderRadius={30}
+          rounded="lg"
         >
           <Avatar
             size={60}
@@ -86,12 +86,12 @@ export default function MyAccountScreen() {
           mt="6"
           backgroundColor="white"
           p="3"
-          borderRadius="20"
+          rounded="lg"
         >
           <Button
             backgroundColor="blue.600"
             width="100%"
-            borderRadius="50%"
+            rounded="full"
             onPress={logout}
           >
             <Text fontSize="xl" color="white" bold>

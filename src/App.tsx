@@ -15,6 +15,7 @@ import MyAccountStacks from "./routes/StackNavigators/MyAccountStacks/MyAccountS
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ErrorProvider } from "./containers/ErrorProvider";
 
 export type Props = {};
 
@@ -24,19 +25,21 @@ const App: React.FC<Props> = () => {
   return (
     <NativeBaseProvider>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <QueryClientProvider client={queryClient}>
-          <Provider store={store}>
-            <NotificationProvider>
+        <ErrorProvider>
+          <QueryClientProvider client={queryClient}>
+            <Provider store={store}>
               <NavigationContainer>
-                <AuthProvider
-                  unAuthComponent={(user) => <LoginScreen />}
-                  authComponent={(user) => <UserTabs />}
-                  unUpdatedAuthComponent={(user) => <MyAccountStacks />}
-                />
+                <NotificationProvider>
+                  <AuthProvider
+                    unAuthComponent={(user) => <LoginScreen />}
+                    authComponent={(user) => <UserTabs />}
+                    unUpdatedAuthComponent={(user) => <MyAccountStacks />}
+                  />
+                </NotificationProvider>
               </NavigationContainer>
-            </NotificationProvider>
-          </Provider>
-        </QueryClientProvider>
+            </Provider>
+          </QueryClientProvider>
+        </ErrorProvider>
       </SafeAreaProvider>
     </NativeBaseProvider>
   );

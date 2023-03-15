@@ -71,7 +71,7 @@ export const TripLocationCard = ({ tripData }: { tripData: TripDetail }) => {
           </Text>
           <DescriptionLine
             fontWeight="semibold"
-            title="From"
+            title="To"
             description={tripData?.endStation?.name}
           />
           <Text fontSize="sm" color="grey">

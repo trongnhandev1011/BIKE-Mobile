@@ -66,10 +66,10 @@ const PickerProfileScreen = () => {
           width={180}
           height={180}
           alt="image"
-          borderRadius={100}
+          rounded="full"
         />
       </Center>
-      <View backgroundColor="white" p="4" borderRadius={20} mt="10">
+      <View backgroundColor="white" p="4" rounded="lg" mt="10">
         <Text fontSize="xl" bold mb="2">
           Picker information
         </Text>
@@ -84,7 +84,7 @@ const PickerProfileScreen = () => {
       </View>
       <Button
         backgroundColor="green.600"
-        borderRadius={20}
+        rounded="full"
         mt="10"
         onPress={() => handleApplierActions("ACCEPT")}
       >
@@ -94,7 +94,7 @@ const PickerProfileScreen = () => {
       </Button>
       <Button
         backgroundColor="red.600"
-        borderRadius={20}
+        rounded="full"
         mt="5"
         onPress={() => handleApplierActions("REJECT")}
       >

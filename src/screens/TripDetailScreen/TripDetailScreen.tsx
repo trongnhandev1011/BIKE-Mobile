@@ -1,6 +1,6 @@
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Center, ScrollView, VStack } from "native-base";
-import React, { useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { useQuery } from "react-query";
 import { AppLoading } from "../../components/AppLoading";
 import { getTripDetailAPI } from "../../services/backend/TripsController";
@@ -14,6 +14,8 @@ import {
   TripSummaryCard,
 } from "./InformationElements";
 import { TripActionForBiker, TripActionForPassenger } from "./ActionElements";
+import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
+import { NotificationContext } from "../../containers/NotificationProvider/NotificationProvider";
 
 export type TripDetailScreenProps = {};
 
@@ -24,17 +26,39 @@ interface IRouteParams {
 export default function TripDetailScreen() {
   const route = useRoute();
   const { user } = useAuth();
+  const { setErrorMsg } = useContext(ErrorContext);
+  const navigation = useNavigation();
 
   const { tripId } = route?.params as IRouteParams;
   const {
     isLoading,
     data: tripData,
     refetch,
+    isError,
     error,
   } = useQuery(["tripDetail", tripId], async () => {
     const res = (await getTripDetailAPI(tripId)).data;
+    console.log(res);
+    if (res.code !== 0) {
+      throw res;
+    }
     return res.data;
   });
+
+  const { notification } = useContext(NotificationContext);
+
+  useEffect(() => {
+    refetch();
+  }, [notification]);
+
+  if (isError) {
+    const e = error as any;
+    setErrorMsg({
+      code: e?.code ?? -1,
+      message: e?.message ?? "Unexpected error. Please try again later.",
+    });
+    navigation.goBack();
+  }
 
   if (isLoading) return <AppLoading />;
 
