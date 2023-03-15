@@ -4,6 +4,7 @@ import { Avatar, Box, Flex, Text, TextArea } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { SimpleTrip } from "../../services/backend/TripsController/type";
 import { DescriptionLine } from "../DescriptionLine";
+import { UserRoleConstants } from "../../constants/UserRoleConstants";
 
 export type Props = {
   tripData: any;
@@ -18,7 +19,11 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
           <Box>
             <Avatar backgroundColor={"indigo.500"}>
               <MaterialCommunityIcons
-                name="motorbike"
+                name={
+                  tripData?.role === "PASSENGER"
+                    ? "seat-passenger"
+                    : "motorbike"
+                }
                 size={24}
                 color="white"
               />
@@ -35,6 +40,7 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
               title="To"
               description={tripData?.toLocation}
             />
+
             <DescriptionLine
               fontWeight="semibold"
               title="Start at"

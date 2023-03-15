@@ -5,7 +5,6 @@ import { useQuery } from "react-query";
 import { AppLoading } from "../../components/AppLoading";
 import { getTripDetailAPI } from "../../services/backend/TripsController";
 import { TripDetail } from "../../services/backend/TripsController/type";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useAuth from "../../hooks/useAuth";
 import {
   TripFeedbackCard,
@@ -16,6 +15,7 @@ import {
 import { TripActionForBiker, TripActionForPassenger } from "./ActionElements";
 import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
 import { NotificationContext } from "../../containers/NotificationProvider/NotificationProvider";
+import MapContainer from "../../containers/MapContainer";
 
 export type TripDetailScreenProps = {};
 
@@ -64,10 +64,8 @@ export default function TripDetailScreen() {
 
   return (
     <ScrollView h="full" w="full" px="4" py="8">
-      <Center mb="6">
-        <Center backgroundColor={"indigo.500"} rounded="full" h="40" w="40">
-          <MaterialCommunityIcons name="motorbike" size={100} color="white" />
-        </Center>
+      <Center mb="6" h="300" w="full">
+        <MapContainer tripId={tripId} />
       </Center>
       <VStack space="4" pb="12">
         <TripLocationCard tripData={tripData as TripDetail} />
