@@ -2,9 +2,9 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { HomeScreen } from "../../../screens/HomeScreen";
 import { CreatePostScreen } from "../../../screens/CreatePostScreen";
-import { PickRequestScreen } from "../../../screens/PickRequestScreen";
 import PublicPostListScreen from "../../../screens/PublicPostListScreen/PublicPostListScreen";
 import { PostDetailScreen } from "../../../screens/PostDetailScreen";
+import { MyPostListScreen } from "../../../screens/MyPostListScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +30,11 @@ export default function HomeStacks() {
         name="PublicPostDetailScreen"
         component={PostDetailScreen}
         options={{ title: "Post detail" }}
+      />
+      <Stack.Screen
+        name="MyPostListScreen"
+        component={MyPostListScreen}
+        options={{ title: "My Posts" }}
       />
     </Stack.Navigator>
   );

@@ -1,8 +1,19 @@
 import React, { useContext, useEffect } from "react";
-import { Box, Heading, VStack, Center, Button } from "native-base";
+import {
+  Box,
+  Heading,
+  VStack,
+  Center,
+  Button,
+  Text,
+  Icon,
+  HStack,
+} from "native-base";
 import * as WebBrowser from "expo-web-browser";
 import useAuth from "../../hooks/useAuth";
 import * as Google from "expo-auth-session/providers/google";
+import { Image } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
 import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
 
 WebBrowser.maybeCompleteAuthSession();
@@ -53,7 +64,8 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
 
   return (
     <Center w="full" h="full" backgroundColor="white">
-      <Box safeArea p="2" py="8" w="90%" maxW="290">
+      <Box safeArea p="2" py="8" w="90%" maxW="300">
+        <Image source={require("../../image/green_bike.png")} />
         <Heading
           size="lg"
           fontWeight="600"
@@ -78,13 +90,22 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
 
         <VStack space={3} mt="5">
           <Button
+            backgroundColor={"#DADADA"}
             isLoading={code === "FETCHING"}
             disabled={!request}
             onPress={() => {
               promptAsync();
             }}
           >
-            Login with Google
+            <HStack>
+              <AntDesign
+                style={{ marginRight: 5 }}
+                name="google"
+                size={20}
+                color="black"
+              />
+              <Text fontWeight="bold">Login with Google</Text>
+            </HStack>
           </Button>
         </VStack>
       </Box>

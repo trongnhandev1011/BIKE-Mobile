@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { Box, ScrollView, Text, Flex } from "native-base";
+import { Box, ScrollView, Text, Flex, HStack } from "native-base";
 import React, { useContext, useEffect } from "react";
 import { HomeHeaderContainer } from "../../containers/HomeHeader";
 import { CardActionComponent } from "../../components/CardAction";
@@ -12,22 +12,31 @@ import {
   TripDetail,
 } from "../../services/backend/TripsController/type";
 import _ from "lodash";
+import { getAllPostsAPI } from "../../services/backend/PostController";
+import HomeCardContainer from "../../containers/HomeCardContainer/HomeCardContainer";
 import { NotificationContext } from "../../containers/NotificationProvider/NotificationProvider";
 
 export type HomeScreenProps = {};
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
   const navigation = useNavigation();
+  const { data: postData } = useQuery(["homeScreenPost"], async () => {
+    const res = (await getAllPostsAPI()).data;
+    console.log(res.data);
+    return res.data;
+  });
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} px="3" py="10">
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }} px="3" pt="10" pb="6">
       <HomeHeaderContainer />
       <Box mt="5">
         <CurrentTrip />
       </Box>
       <Box mt="5">
-        <Text>What do you want to do now?</Text>
-        <Flex direction="row" justifyContent="space-around" mt="3">
+        <Text mb="2" fontWeight="bold">
+          What do you want to do now?
+        </Text>
+        <Flex px="4" direction="row" justifyContent="space-between" mt="3">
           <CardActionComponent
             image={{
               url: "https://images.unsplash.com/photo-1554672408-730436b60dde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=726&q=80",
@@ -43,6 +52,12 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
             onPress={() => navigation.navigate("PublicPost" as never)}
           />
         </Flex>
+      </Box>
+      <Text mt="6" fontWeight="bold">
+        Your public post
+      </Text>
+      <Box mt="4" mb="16" ml="4">
+        {postData ? <HomeCardContainer postData={postData.items} /> : null}
       </Box>
     </ScrollView>
   );
