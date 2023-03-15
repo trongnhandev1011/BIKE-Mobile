@@ -22,6 +22,8 @@ import { TripStatusConstants } from "../../constants/TripStatusConstants";
 import { CustomizedDateTimePicker } from "../../containers/CustomizedDateTimePicker";
 import { AppLoading } from "../../components/AppLoading";
 import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
+import useAuth from "../../hooks/useAuth";
+import { UserRoleConstants } from "../../constants/UserRoleConstants";
 
 export type MyTripListScreenProps = {};
 
@@ -43,6 +45,7 @@ const FilterModalContext = createContext<{
 
 export default function MyTripListScreen() {
   const { setErrorMsg } = useContext(ErrorContext);
+  const { user } = useAuth();
   const navigation = useNavigation();
   const [isOpenModal, setOpenModal] = useState(false);
   const [queryKey, setQueryKey] = useState({
@@ -108,6 +111,7 @@ export default function MyTripListScreen() {
     return {
       toLocation: data.startStation,
       fromLocation: data.endStation,
+      role: data.passengerId === user?.id ? "PASSENGER" : "GRABBER",
       startAt: data.postedStartTime
         ? moment(data.postedStartTime).format("h:mm a - DD/MM/YYYY")
         : "",
