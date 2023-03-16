@@ -62,9 +62,14 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
       <Text mt="6" fontWeight="bold">
         Your total rating
       </Text>
-      <Box mt={2} mb={10}>
+      <Box
+        style={{ padding: 10, borderRadius: 5 }}
+        mt={2}
+        mb={10}
+        backgroundColor="white"
+      >
         {user.averagePoint != null ? (
-          <Rating ratingCount={user.averagePoint} />
+          <Rating startingValue={user.averagePoint} ratingCount={5} readonly />
         ) : (
           <Text>You haven't received any rating yet!</Text>
         )}
