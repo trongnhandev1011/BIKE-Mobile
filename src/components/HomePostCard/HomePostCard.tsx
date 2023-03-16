@@ -53,7 +53,7 @@ const HomePostCard: React.FC<Props> = ({ post }) => {
       backgroundColor="white"
       rounded="lg"
       mr="6"
-      width="2/5"
+      width="300"
       onPress={() =>
         navigation.navigate(
           "PublicPostDetailScreen" as never,
