@@ -16,7 +16,11 @@ export default function UpdateVehicleScreen() {
             <Center h="full">
               <VehicleCardContainer />
               <Box mt="5">
-                <Button rounded="full" onPress={() => setEdit(true)}>
+                <Button
+                  rounded="full"
+                  backgroundColor="green.700"
+                  onPress={() => setEdit(true)}
+                >
                   Update vehicle information
                 </Button>
               </Box>

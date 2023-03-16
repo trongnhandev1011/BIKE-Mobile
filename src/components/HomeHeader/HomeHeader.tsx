@@ -21,6 +21,7 @@ export default function HomeHeader({
       <Center
         flexDirection="row"
         backgroundColor="white"
+        shadow="2"
         justifyContent="space-between"
         p="3"
         rounded="full"

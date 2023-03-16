@@ -89,7 +89,7 @@ const UserTabs: React.FC<{}> = () => {
           ),
           tabBarLabel: ({ focused, color }) => (
             <Text style={{ color: focused ? "#33B565" : color, fontSize: 12 }}>
-              My Trips
+              Notification
             </Text>
           ),
         }}
@@ -108,7 +108,7 @@ const UserTabs: React.FC<{}> = () => {
           ),
           tabBarLabel: ({ focused, color }) => (
             <Text style={{ color: focused ? "#33B565" : color, fontSize: 12 }}>
-              My Account
+              Account
             </Text>
           ),
         }}

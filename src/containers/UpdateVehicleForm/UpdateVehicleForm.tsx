@@ -212,7 +212,12 @@ export default function UpdateVehicleForm({
             setValue={setValue}
             initalImage={vehicleData?.image as string}
           />
-          <Button mt="4" onPress={handleSubmit(onSubmit)} rounded="full">
+          <Button
+            mt="4"
+            onPress={handleSubmit(onSubmit)}
+            rounded="full"
+            backgroundColor="green.700"
+          >
             Submit
           </Button>
         </VStack>
@@ -263,7 +268,12 @@ const UpdateVehicleImage = ({
               />
             </Box>
           )}
-          <Button h="10" onPress={pickImage}>
+          <Button
+            backgroundColor="green.700"
+            h="10"
+            rounded="full"
+            onPress={pickImage}
+          >
             Pick image
           </Button>
         </Flex>

@@ -1,6 +1,5 @@
-import { HStack, Box } from "native-base";
+import { HStack, Box, Pressable, Image, Text } from "native-base";
 import React from "react";
-import { Pressable, Image, Text } from "react-native";
 import { SimplePost } from "../../services/backend/PostController/type";
 import { DescriptionLine } from "../DescriptionLine";
 import moment from "moment";
@@ -50,12 +49,11 @@ const HomePostCard: React.FC<Props> = ({ post }) => {
 
   return (
     <Pressable
-      style={{
-        backgroundColor: "white",
-        borderRadius: 10,
-        width: 220,
-        marginRight: 30,
-      }}
+      shadow="2"
+      backgroundColor="white"
+      rounded="lg"
+      mr="6"
+      width="2/5"
       onPress={() =>
         navigation.navigate(
           "PublicPostDetailScreen" as never,
@@ -67,17 +65,12 @@ const HomePostCard: React.FC<Props> = ({ post }) => {
     >
       <HStack>
         <Image
-          style={{
-            width: "50%",
-            height: 160,
-            borderTopLeftRadius: 10,
-          }}
+          w="1/2"
+          height="40"
+          roundedTopLeft="2"
           source={startStationImg}
         />
-        <Image
-          style={{ width: "50%", height: 160, borderTopRightRadius: 10 }}
-          source={endStationImg}
-        />
+        <Image w="1/2" height="40" roundedTopLeft="2" source={endStationImg} />
       </HStack>
       <Box style={{ padding: 10 }}>
         {getPostData(post).map((item) => (

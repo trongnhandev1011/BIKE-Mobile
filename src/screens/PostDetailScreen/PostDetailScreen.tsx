@@ -32,6 +32,7 @@ import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
 import moment from "moment";
 import { NotificationContext } from "../../containers/NotificationProvider/NotificationProvider";
 import { Image } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export type PostDetailScreenProps = {};
 
@@ -169,9 +170,16 @@ export default function PostDetailScreen() {
           backgroundColor="white"
           alignItems="center"
           rounded="lg"
-          padding={3}
+          padding="3"
+          shadow="2"
         >
-          <Avatar bg="green.500" mr="5" size="lg" />
+          <Avatar bg="green.600" mr="5" size="lg">
+            <MaterialCommunityIcons
+              name="file-document"
+              size={26}
+              color="white"
+            />
+          </Avatar>
           <View>
             <DescriptionLine
               title="Title"
@@ -185,7 +193,14 @@ export default function PostDetailScreen() {
             />
           </View>
         </HStack>
-        <View padding={3} backgroundColor="white" rounded="md" mt={4}>
+        <View
+          p={3}
+          pb="5"
+          backgroundColor="white"
+          shadow="2"
+          rounded="md"
+          mt={4}
+        >
           <Text fontSize="2xl" bold mb="3">
             General information
           </Text>
@@ -210,7 +225,7 @@ export default function PostDetailScreen() {
               text="Applied Request"
               optionalData={{ postId }}
             />
-            <View backgroundColor="white" mt="3" p="3" rounded="lg">
+            <View mt="3" py="3" rounded="full">
               <Button
                 onPress={() => cancelPostHandler()}
                 rounded="full"

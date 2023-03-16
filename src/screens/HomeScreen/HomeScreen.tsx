@@ -87,13 +87,18 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
           />
         </Flex>
       </Box>
-      <Text mt="6" fontWeight="bold">
-        Your public post
-      </Text>
-      <Box mt="4" ml="4">
-        {postData ? <HomeCardContainer postData={postData.items} /> : null}
-      </Box>
-      <Text mt="6" fontWeight="bold">
+      {postData?.items?.length !== 0 ? (
+        <>
+          {" "}
+          <Text mt="6" fontWeight="bold">
+            Your public post
+          </Text>
+          <Box mt="4" ml="4" mb="24">
+            <HomeCardContainer postData={postData?.items} />
+          </Box>
+        </>
+      ) : null}
+      {/* <Text mt="6" fontWeight="bold">
         Your total rating
       </Text>
       <Box
@@ -122,7 +127,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
             />
           </HStack>
         )}
-      </Box>
+      </Box> */}
     </ScrollView>
   );
 };

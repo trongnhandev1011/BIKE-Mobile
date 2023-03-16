@@ -104,7 +104,7 @@ export default function CreatePostForm({
 
   return (
     <>
-      <Box backgroundColor="white" p="2" rounded="lg">
+      <Box backgroundColor="white" p="2" rounded="lg" shadow="2">
         <FormItem
           control={control}
           render={({ field: { onChange, value } }) => (
@@ -135,7 +135,7 @@ export default function CreatePostForm({
           rules={CreatePostFormRules.role}
         />
       </Box>
-      <Box mt="4" backgroundColor="white" p="4" pb="8" rounded="lg">
+      <Box mt="4" backgroundColor="white" p="4" pb="8" rounded="lg" shadow="2">
         <VStack space={2}>
           <FormItem
             isInvalid={!!errors["fromLocation"]}

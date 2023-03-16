@@ -110,6 +110,7 @@ export default function PublicPostListScreen() {
         : "",
       status: data.status,
       role: data.role,
+      id: data.id,
     };
   };
 

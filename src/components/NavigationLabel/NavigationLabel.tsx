@@ -26,8 +26,10 @@ const NavigationLabel = ({
           justifyContent="space-between"
           mt="6"
           backgroundColor="white"
-          p="3"
-          rounded="lg"
+          py="3"
+          px="4"
+          rounded="full"
+          shadow="2"
         >
           <Text fontSize="lg">{text}</Text>
           <AntDesign name="caretright" size={20} color="black" />

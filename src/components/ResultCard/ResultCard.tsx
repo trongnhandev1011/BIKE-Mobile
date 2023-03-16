@@ -37,7 +37,7 @@ export default function SuccessfulModal({
         backgroundColor: "gray.700",
       }}
       _web={{
-        shadow: 2,
+        shadow: 3,
         borderWidth: 0,
       }}
       _light={{

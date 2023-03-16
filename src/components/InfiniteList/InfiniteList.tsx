@@ -27,7 +27,7 @@ export default function InfiniteList({
   render,
 }: InfiniteListProps) {
   return (
-    <ScrollView>
+    <ScrollView px="0.5">
       <VStack space={5}>
         {isLoading
           ? [1, 2, 3, 4].map((value) => <Skeleton key={value} />)

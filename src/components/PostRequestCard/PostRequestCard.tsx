@@ -35,6 +35,7 @@ const PostRequestCard = ({ user, navigate }: PostRequestCardProps) => {
         mt="3"
         rounded="lg"
         alignItems="center"
+        shadow="2"
       >
         <Image
           source={{

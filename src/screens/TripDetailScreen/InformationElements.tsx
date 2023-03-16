@@ -30,7 +30,7 @@ export const TripPartnerCard = ({
   role: string;
 }) => {
   return (
-    <Box p="3" backgroundColor="white" w="full" rounded="lg">
+    <Box p="3" backgroundColor="white" w="full" rounded="lg" shadow="2">
       <Flex direction="row">
         <Box marginLeft={4}>
           <Text fontSize="lg" bold>
@@ -58,7 +58,7 @@ export const TripPartnerCard = ({
 
 export const TripLocationCard = ({ tripData }: { tripData: TripDetail }) => {
   return (
-    <Box p="3" backgroundColor="white" w="full" rounded="lg">
+    <Box p="3" backgroundColor="white" w="full" rounded="lg" shadow="2">
       <Flex direction="row">
         <Box marginLeft={4}>
           <DescriptionLine
@@ -85,7 +85,7 @@ export const TripLocationCard = ({ tripData }: { tripData: TripDetail }) => {
 
 export const TripSummaryCard = ({ tripData }: { tripData: TripDetail }) => {
   return (
-    <Box p="3" backgroundColor="white" w="full" rounded="lg">
+    <Box p="3" backgroundColor="white" w="full" rounded="lg" shadow="2">
       <Flex direction="row">
         <Box marginLeft={4}>
           <Text fontWeight="bold" fontSize="lg">
@@ -138,7 +138,14 @@ export const TripSummaryCard = ({ tripData }: { tripData: TripDetail }) => {
 
 export const TripFeedbackCard = ({ tripData }: { tripData: TripDetail }) => {
   return (
-    <Box px="4" py="3.5" backgroundColor="white" w="full" rounded="lg">
+    <Box
+      px="4"
+      py="3.5"
+      backgroundColor="white"
+      w="full"
+      rounded="lg"
+      shadow="2"
+    >
       <Flex direction="row">
         <Box marginLeft={4}>
           <Text fontWeight="bold" fontSize="lg">

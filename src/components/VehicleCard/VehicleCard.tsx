@@ -10,7 +10,14 @@ export default function VehicleCard({ data }: IProps) {
   if (!data) return null;
 
   return (
-    <Center backgroundColor={"white"} rounded="lg" py="6" px="4" w="full">
+    <Center
+      backgroundColor={"white"}
+      rounded="lg"
+      py="6"
+      px="4"
+      w="full"
+      shadow="2"
+    >
       <Text fontSize="lg" fontWeight="semibold">
         {`Vehicle card: ${data.type}`}
       </Text>

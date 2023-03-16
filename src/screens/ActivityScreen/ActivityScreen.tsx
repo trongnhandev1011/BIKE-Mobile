@@ -20,10 +20,12 @@ const navElements = [
   {
     link: "MyPostListScreen",
     label: "My Post List",
+    icon: "file-document",
   },
   {
     link: "MyApplicationListScreen",
     label: "My Picked Request",
+    icon: "application",
   },
 ];
 
@@ -46,12 +48,13 @@ export default function ActivityScreen() {
                 backgroundColor="white"
                 w="full"
                 rounded="full"
+                shadow="2"
               >
                 <Flex direction="row">
                   <Box>
                     <Avatar backgroundColor="#33B565">
                       <MaterialCommunityIcons
-                        name="motorbike"
+                        name={item.icon}
                         size={24}
                         color="white"
                       />

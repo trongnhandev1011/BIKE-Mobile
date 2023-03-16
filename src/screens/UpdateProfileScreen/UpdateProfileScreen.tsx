@@ -7,6 +7,7 @@ import {
   Button,
   ScrollView,
   Input,
+  Flex,
 } from "native-base";
 import { Image } from "react-native";
 import { useContext, useState } from "react";
@@ -15,9 +16,10 @@ import { updateProfile } from "../../services/backend/AuthController/index";
 import useAuth from "../../hooks/useAuth";
 import { useNavigation } from "@react-navigation/native";
 import { User } from "../../types";
-import { uploadImage } from "../../utils/ImageUtils";
+import { uploadImage } from "../../services/backend/AuthController";
 import { UpdateProfileData } from "../../types";
 import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
+import * as ImagePicker from "expo-image-picker";
 
 export type UpdateProfileScreenProps = {};
 
@@ -32,16 +34,23 @@ const UpdateProfileScreen = () => {
   // to avoid typescript error
   const userData = user as User;
 
+  console.log(userData);
+
   const [updateData, setUpdateData] = useState<UpdateProfileData>({
     name: userData.name,
     phone: userData.phone,
-    avatar: null,
-    card: null,
+    avatar: userData.avatar
+      ? `https://s3-ap-southeast-1.amazonaws.com${userData.avatar}`
+      : undefined,
+    card: userData.card
+      ? `https://s3-ap-southeast-1.amazonaws.com${userData.card}`
+      : undefined,
   });
 
   const [loading, setLoading] = useState<boolean>(false);
 
   const setFormField = (field: string, value: any) => {
+    console.log(value);
     setUpdateData((prev) => ({
       ...prev,
       [field]: value,
@@ -54,11 +63,19 @@ const UpdateProfileScreen = () => {
       const uploadAvatarResult = await uploadImage(updateData.avatar);
       const uploadStudentCardResult = await uploadImage(updateData.card);
 
+      console.log(uploadAvatarResult.data);
+
       const updatedData = {
         name: updateData?.name || userData.name,
         phone: updateData?.phone || userData.phone,
-        avatar: uploadAvatarResult ? uploadAvatarResult : userData.avatar,
-        card: uploadStudentCardResult ? uploadStudentCardResult : userData.card,
+        avatar:
+          uploadAvatarResult.data.code == 0
+            ? uploadAvatarResult.data.data.path
+            : userData.avatar,
+        card:
+          uploadStudentCardResult.data.code == 0
+            ? uploadStudentCardResult.data.data.path
+            : userData.card,
       };
 
       const { data: result } = await updateProfile(updatedData);
@@ -85,27 +102,15 @@ const UpdateProfileScreen = () => {
 
   return (
     <ScrollView w="full" h="full">
-      <Box h="full" w="full" px="3" pt="5" pb="10">
-        {[
-          {
-            path: "UpdateAvatarScreen",
-            text: "Update your avatar",
-            setFormField,
-          },
-          {
-            path: "UpdateStudentCardScreen",
-            text: "Update your student card",
-            setFormField,
-          },
-        ].map((item, idx) => (
-          <NavigationLabelComponent
-            key={idx}
-            path={item.path}
-            text={item.text}
-            optionalData={setFormField}
-          />
-        ))}
-        <View backgroundColor="white" mt="6" p="3" rounded="lg">
+      <Box h="full" w="full" px="3" pb="10">
+        <View
+          backgroundColor="white"
+          mt="6"
+          px="4"
+          py="5"
+          rounded="lg"
+          shadow="2"
+        >
           <Text fontSize="xl" bold mb="3">
             Your new information:
           </Text>
@@ -138,41 +143,104 @@ const UpdateProfileScreen = () => {
                 />
               </HStack>
             ))}
-            {[
-              {
-                label: "Avatar",
-                uri: updateData.avatar?.uri,
-              },
-              {
-                label: "Student card",
-                uri: updateData.card?.uri,
-              },
-            ].map((item, idx) => (
-              <HStack alignItems="center" key={idx}>
-                <Text bold fontSize="md">
-                  {item.label} {": "}
-                </Text>
-                <Image
-                  source={{
-                    uri: item.uri,
-                  }}
-                  style={{ width: 120, height: 120 }}
-                />
-              </HStack>
-            ))}
+            <HStack>
+              {[
+                {
+                  label: "Avatar",
+                  key: "avatar",
+                  uri: updateData.avatar,
+                },
+                {
+                  label: "Student card",
+                  key: "card",
+                  uri: updateData.card,
+                },
+              ].map((item, idx) => (
+                <VStack key={idx}>
+                  <Text bold fontSize="md" mb="2">
+                    {item.label}
+                    {": "}
+                  </Text>
+                  <UpdateImage
+                    setValue={(value) => {
+                      setFormField(item.key, value);
+                    }}
+                    initalImage={item.uri as string}
+                  />
+                </VStack>
+              ))}
+            </HStack>
           </VStack>
         </View>
         <Button
           mt="4"
           isLoading={loading}
           onPress={() => updateUserProfile()}
-          rounded="lg"
-          backgroundColor="#059669"
+          rounded="full"
+          backgroundColor="green.700"
         >
           Save
         </Button>
       </Box>
     </ScrollView>
+  );
+};
+
+const UpdateImage = ({
+  setValue,
+  initalImage,
+}: {
+  setValue: any;
+  initalImage?: string;
+}) => {
+  const [image, setImage] = useState(
+    initalImage
+      ? `https://s3-ap-southeast-1.amazonaws.com${initalImage}`
+      : undefined
+  );
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+      setValue(result.assets[0].uri);
+    }
+  };
+
+  return (
+    <>
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <Flex>
+          {image && (
+            <Box mr="4">
+              <Image
+                source={{
+                  uri: image ?? initalImage,
+                }}
+                style={{ width: 150, height: 150 }}
+              />
+            </Box>
+          )}
+          <Button
+            mt="2"
+            backgroundColor="green.700"
+            h="10"
+            w="32"
+            rounded="full"
+            onPress={pickImage}
+          >
+            Pick image
+          </Button>
+        </Flex>
+      </View>
+    </>
   );
 };
 

@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Pressable } from "react-native";
 import { Avatar, Box, Flex, Text, TextArea } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { UserRoleConstants } from "../../constants/UserRoleConstants";
 
 export type Props = {
   applicationData: {
@@ -10,6 +11,7 @@ export type Props = {
     startAt: string;
     role: string;
     status: string;
+    id: number;
   };
   onPress: Function;
 };
@@ -17,17 +19,27 @@ export type Props = {
 const ApplicationCard: React.FC<Props> = ({ applicationData, onPress }) => {
   return (
     <Pressable onPress={() => onPress()}>
-      <Box px="4" py="3.5" backgroundColor="white" w="full" rounded="lg">
+      <Box
+        px="4"
+        py="3.5"
+        backgroundColor="white"
+        w="full"
+        rounded="lg"
+        shadow="2"
+      >
         <Flex direction="row">
-          <Box>
+          <Flex alignItems="center">
             <Avatar backgroundColor="#33B565">
               <MaterialCommunityIcons
-                name="file-document"
+                name="application"
                 size={24}
                 color="white"
               />
             </Avatar>
-          </Box>
+            <Text mt="1" color="green.800" fontWeight="semibold" fontSize="md">
+              {applicationData.id}
+            </Text>
+          </Flex>
           <Box marginLeft={4}>
             <Text fontSize="md">
               <Text fontWeight="semibold">From:</Text>{" "}
@@ -42,7 +54,8 @@ const ApplicationCard: React.FC<Props> = ({ applicationData, onPress }) => {
               {applicationData?.startAt}
             </Text>
             <Text fontSize="md">
-              <Text fontWeight="semibold">Role:</Text> {applicationData?.role}
+              <Text fontWeight="semibold">Apply as:</Text>{" "}
+              {UserRoleConstants[applicationData?.role].label}
             </Text>
             <Text fontSize="md">
               <Text fontWeight="semibold">Status:</Text>{" "}

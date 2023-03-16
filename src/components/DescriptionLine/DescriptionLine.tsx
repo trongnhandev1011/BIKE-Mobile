@@ -6,14 +6,16 @@ const DescriptionLine = ({
   description,
   fontSize = "md",
   fontWeight = "bold",
+  isTruncated = false,
 }: {
   title: string;
   description: string;
   fontSize?: string;
   fontWeight?: string;
+  isTruncated?: boolean;
 }) => {
   return (
-    <Text fontSize={fontSize}>
+    <Text fontSize={fontSize} isTruncated={isTruncated}>
       <Text fontSize={fontSize} fontWeight={fontWeight}>
         {title}
       </Text>

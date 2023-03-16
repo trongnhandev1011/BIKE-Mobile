@@ -82,48 +82,13 @@ export default function MyApplicationListScreen() {
         : "",
       status: data.accepted ? "ACCEPTED" : "WAITING",
       role: data.role,
+      id: data.id,
     };
   };
 
   return (
     <>
-      {/* TODO: might need to filter status later */}
-      {/* <FilterModalContext.Provider
-        value={{
-          isOpenModal,
-          submitHandler: (data: any) => {
-            setOpenModal(false);
-            setQueryKey({
-              role: data?.role === "ALL" ? undefined : data?.role,
-            });
-          },
-          onCancel: () => {
-            setOpenModal(false);
-          },
-          onReset: () => {
-            setOpenModal(false);
-          },
-        }}
-      >
-        <FilterModal />
-      </FilterModalContext.Provider> */}
       <Box h="full" w="full" px="3" py="5">
-        {/* <HStack space={2} alignItems="center">
-          <Input
-            flex={1}
-            value={searchInput}
-            placeholder="Search"
-            fontSize="lg"
-            rounded="full"
-            backgroundColor="white"
-            onChangeText={(value) => setSearchInput(value)}
-          />
-          <IconButton
-            onPress={() => setOpenModal(true)}
-            size="sm"
-            icon={<MaterialIcons name="filter-alt" size={32} color="black" />}
-          />
-        </HStack> */}
         <Box>
           <InfiniteList
             data={applicationData}

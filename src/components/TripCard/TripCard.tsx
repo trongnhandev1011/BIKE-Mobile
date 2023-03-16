@@ -14,7 +14,14 @@ export type Props = {
 const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
   return (
     <Pressable onPress={() => onPress()}>
-      <Box px="4" py="3.5" backgroundColor="white" w="full" rounded="lg">
+      <Box
+        px="4"
+        py="3.5"
+        backgroundColor="white"
+        w="full"
+        rounded="lg"
+        shadow="2"
+      >
         <Flex direction="row">
           <Box>
             <Avatar backgroundColor="#33B565">
@@ -29,15 +36,17 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
               />
             </Avatar>
           </Box>
-          <Box marginLeft={4} w="full">
+          <Box marginLeft={4} w="4/5">
             <DescriptionLine
               fontWeight="semibold"
               title="From"
+              isTruncated={true}
               description={tripData?.fromLocation}
             />
             <DescriptionLine
               fontWeight="semibold"
               title="To"
+              isTruncated={true}
               description={tripData?.toLocation}
             />
 

@@ -33,6 +33,7 @@ export default function MyAccountScreen() {
             alignItems="center"
             mt="10"
             backgroundColor="white"
+            shadow="2"
             p={3}
             rounded="lg"
           >
@@ -49,18 +50,14 @@ export default function MyAccountScreen() {
                 {userData?.name}
               </Text>
               <HStack alignItems="center">
-                <Text bold fontSize="md">
-                  Phone number:{" "}
-                </Text>
-                <Text fontSize="md" color="red.600">
+                <Text fontSize="md" color="green.800" fontWeight="semibold">
                   {userData.phone != null ? userData.phone : "Need update"}
                 </Text>
               </HStack>
               <HStack alignItems="center">
-                <Text bold fontSize="md">
-                  Email:{" "}
+                <Text fontSize="md" color="grey">
+                  {userData?.email}
                 </Text>
-                <Text fontSize="md">{userData?.email}</Text>
               </HStack>
             </View>
           </HStack>
@@ -76,9 +73,7 @@ export default function MyAccountScreen() {
             alignItems="center"
             justifyContent="space-between"
             mt="6"
-            backgroundColor="white"
-            p="3"
-            rounded="lg"
+            py="3"
           >
             <Button
               backgroundColor="#059669"

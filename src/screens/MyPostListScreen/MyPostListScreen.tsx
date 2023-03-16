@@ -114,6 +114,7 @@ export default function MyPostListScreen() {
       role: data.role,
       postId: data.id,
       description: data.description,
+      id: data.id,
     };
   };
 

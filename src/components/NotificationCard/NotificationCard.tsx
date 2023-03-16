@@ -33,21 +33,24 @@ const NotificationRequestCard: React.FC<Props> = ({
               <MaterialCommunityIcons name="bell" size={24} color="white" />
             </Avatar>
           </Box>
-          <Box ml="4" w="full">
+          <Box ml="4" w="4/5">
+            {notificationData?.time ? (
+              <Text
+                color="green.600"
+                fontSize="sm"
+                display="flex"
+                flexWrap="wrap"
+                maxW="4/5"
+              >
+                {moment(notificationData?.time).format("h:mm a - DD/MM/YYYY")}
+              </Text>
+            ) : null}
             <DescriptionLine
               fontWeight="semibold"
               title="Title"
               description={notificationData?.title}
             />
-            {notificationData?.time ? (
-              <DescriptionLine
-                fontWeight="semibold"
-                title="Date"
-                description={moment(notificationData?.time).format(
-                  "h:mm a - DD/MM/YYYY"
-                )}
-              />
-            ) : null}
+
             <Text
               color="grey"
               fontSize="sm"
