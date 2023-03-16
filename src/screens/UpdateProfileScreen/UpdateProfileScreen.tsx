@@ -157,7 +157,7 @@ const UpdateProfileScreen = () => {
                 },
               ].map((item, idx) => (
                 <VStack key={idx}>
-                  <Text bold fontSize="md" mb="2">
+                  <Text bold fontSize="md" mb="4">
                     {item.label}
                     {": "}
                   </Text>
@@ -219,7 +219,7 @@ const UpdateImage = ({
       <View style={{ flex: 1, justifyContent: "center" }}>
         <Flex alignItems={image ?? initalImage ? "center" : "start"}>
           {image && (
-            <Box mr="4">
+            <Box mx="4">
               <Image
                 source={{
                   uri: image ?? initalImage,
@@ -229,7 +229,8 @@ const UpdateImage = ({
             </Box>
           )}
           <Button
-            mt="2"
+            mt="4"
+            mb="4"
             backgroundColor="green.700"
             h="10"
             w="32"
