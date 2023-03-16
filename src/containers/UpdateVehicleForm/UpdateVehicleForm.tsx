@@ -41,6 +41,7 @@ export default function UpdateVehicleForm({
     control,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm();
   const {
@@ -63,20 +64,24 @@ export default function UpdateVehicleForm({
 
   const onSubmit = async (data: Omit<Vehicle, "id" | "status"> | any) => {
     let result = false;
-    console.log(data);
+
     try {
       //TODO:update image first
       let resImage: any = null;
-      try {
-        resImage = (await uploadImage(data.image)).data;
-        if (resImage?.code !== 0) throw resImage;
-      } catch (e: any) {
-        setErrorMsg({
-          code: e?.code ?? -1,
-          message: e?.message ?? "Unable to upload image. Please try again.",
-        });
-        return;
-      }
+      console.log(data);
+
+      if (data?.image?.includes("file://"))
+        try {
+          resImage = (await uploadImage(data.image)).data;
+
+          if (resImage?.code !== 0) throw resImage;
+        } catch (e: any) {
+          setErrorMsg({
+            code: e?.code ?? -1,
+            message: e?.message ?? "Unable to upload image. Please try again.",
+          });
+          return;
+        }
       let res = undefined;
       if (vehicleData === null) {
         res = (
@@ -209,8 +214,18 @@ export default function UpdateVehicleForm({
             rules={UpdateVehicleFormRules.description}
           />
           <UpdateVehicleImage
-            setValue={setValue}
-            initalImage={vehicleData?.image as string}
+            setValue={(value) => {
+              console.log(value);
+              setValue("image", value);
+              console.log(getValues());
+            }}
+            initalImage={
+              vehicleData?.image
+                ? vehicleData?.image.includes("http")
+                  ? vehicleData?.image
+                  : `https://s3-ap-southeast-1.amazonaws.com${vehicleData?.image}`
+                : undefined
+            }
           />
           <Button
             mt="4"
@@ -233,11 +248,7 @@ const UpdateVehicleImage = ({
   setValue: any;
   initalImage?: string;
 }) => {
-  const [image, setImage] = useState(
-    initalImage
-      ? `https://s3-ap-southeast-1.amazonaws.com${initalImage}`
-      : undefined
-  );
+  const [image, setImage] = useState(initalImage ?? undefined);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -250,15 +261,17 @@ const UpdateVehicleImage = ({
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      setValue("image", result.assets[0].uri);
+      setValue(result.assets[0].uri);
     }
   };
+
+  console.log(initalImage);
 
   return (
     <>
       <View style={{ flex: 1, justifyContent: "center" }}>
         <Flex direction="row" alignItems="center">
-          {image && (
+          {(image ?? initalImage) && (
             <Box mr="4">
               <Image
                 source={{

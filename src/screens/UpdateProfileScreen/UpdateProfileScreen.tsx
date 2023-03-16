@@ -39,11 +39,15 @@ const UpdateProfileScreen = () => {
   const [updateData, setUpdateData] = useState<UpdateProfileData>({
     name: userData.name,
     phone: userData.phone,
-    avatar: userData.avatar
-      ? `https://s3-ap-southeast-1.amazonaws.com${userData.avatar}`
+    avatar: userData?.avatar
+      ? userData.avatar.includes("http")
+        ? userData.avatar
+        : `https://s3-ap-southeast-1.amazonaws.com${userData.avatar}`
       : undefined,
-    card: userData.card
-      ? `https://s3-ap-southeast-1.amazonaws.com${userData.card}`
+    card: userData?.card
+      ? userData.card.includes("http")
+        ? userData.card
+        : `https://s3-ap-southeast-1.amazonaws.com${userData.card}`
       : undefined,
   });
 
@@ -58,23 +62,28 @@ const UpdateProfileScreen = () => {
   };
 
   const updateUserProfile = async () => {
+    console.log("test");
     try {
-      setLoading(true);
-      const uploadAvatarResult = await uploadImage(updateData.avatar);
-      const uploadStudentCardResult = await uploadImage(updateData.card);
+      console.log(updateData?.avatar);
 
-      console.log(uploadAvatarResult.data);
+      setLoading(true);
+      let uploadAvatarResult;
+      let uploadStudentCardResult;
+      if (updateData?.avatar)
+        uploadAvatarResult = await uploadImage(updateData.avatar);
+      if (updateData?.card)
+        uploadStudentCardResult = await uploadImage(updateData.card);
 
       const updatedData = {
         name: updateData?.name || userData.name,
         phone: updateData?.phone || userData.phone,
         avatar:
-          uploadAvatarResult.data.code == 0
-            ? uploadAvatarResult.data.data.path
+          uploadAvatarResult?.data?.code == 0
+            ? uploadAvatarResult?.data?.data?.path
             : userData.avatar,
         card:
-          uploadStudentCardResult.data.code == 0
-            ? uploadStudentCardResult.data.data.path
+          uploadStudentCardResult?.data?.code == 0
+            ? uploadStudentCardResult?.data?.data?.path
             : userData.card,
       };
 
@@ -156,7 +165,7 @@ const UpdateProfileScreen = () => {
                   uri: updateData.card,
                 },
               ].map((item, idx) => (
-                <VStack key={idx}>
+                <Flex key={idx}>
                   <Text bold fontSize="md" mb="2">
                     {item.label}
                     {": "}
@@ -167,7 +176,7 @@ const UpdateProfileScreen = () => {
                     }}
                     initalImage={item.uri as string}
                   />
-                </VStack>
+                </Flex>
               ))}
             </HStack>
           </VStack>
@@ -193,11 +202,7 @@ const UpdateImage = ({
   setValue: any;
   initalImage?: string;
 }) => {
-  const [image, setImage] = useState(
-    initalImage
-      ? `https://s3-ap-southeast-1.amazonaws.com${initalImage}`
-      : undefined
-  );
+  const [image, setImage] = useState(initalImage ?? undefined);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -216,9 +221,9 @@ const UpdateImage = ({
 
   return (
     <>
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <Flex alignItems={image ?? initalImage ? "center" : "start"}>
-          {image && (
+      <View style={{ justifyContent: "center" }}>
+        <Flex alignItems={image ?? initalImage ? "center" : "flex-start"}>
+          {image ?? initalImage ? (
             <Box mr="4">
               <Image
                 source={{
@@ -227,7 +232,7 @@ const UpdateImage = ({
                 style={{ width: 150, height: 150 }}
               />
             </Box>
-          )}
+          ) : null}
           <Button
             mt="2"
             backgroundColor="green.700"
