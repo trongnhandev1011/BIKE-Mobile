@@ -7,6 +7,7 @@ import { PostDetailScreen } from "../../../screens/PostDetailScreen";
 import { MyPostListScreen } from "../../../screens/MyPostListScreen";
 import { MyPickerPostListScreen } from "../../../screens/MyPickerPostList";
 import { PickerProfileScreen } from "../../../screens/PickerProfileScreen";
+import { TripDetailScreen } from "../../../screens/TripDetailScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +48,11 @@ export default function HomeStacks() {
         name="PickerProfileScreen"
         component={PickerProfileScreen}
         options={{ title: "Picker profile" }}
+      />
+      <Stack.Screen
+        name="CurrentTripDetail"
+        component={TripDetailScreen}
+        options={{ title: "Trip Detail" }}
       />
     </Stack.Navigator>
   );

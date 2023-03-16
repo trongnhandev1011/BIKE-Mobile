@@ -53,10 +53,18 @@ export const getRatingEmoji = (rating: number) => {
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
   const navigation = useNavigation();
-  const { data: postData } = useQuery(["homeScreenPost"], async () => {
+  const { data: postData, refetch } = useQuery(["homeScreenPost"], async () => {
     const res = (await getAllPostsAPI()).data;
     return res.data;
   });
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      refetch();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const { user } = useAuth();
 
@@ -140,6 +148,7 @@ function CurrentTrip() {
   } = useQuery("currentTrip", async () => {
     return (await getCurrentTripAPI()).data;
   });
+  const navigation = useNavigation();
 
   const { notification } = useContext(NotificationContext);
 
@@ -155,6 +164,7 @@ function CurrentTrip() {
       startAt: data?.startAt
         ? moment(data?.startAt).format("h:mm a - DD/MM/YYYY")
         : "",
+      id: data.id,
     };
   };
 
@@ -179,6 +189,12 @@ function CurrentTrip() {
           <TripCardComponent
             onPress={() => {
               //TODO: navigate to trip detail screen later
+              navigation.navigate(
+                "CurrentTripDetail" as never,
+                {
+                  tripId: res?.data?.id,
+                } as never
+              );
             }}
             tripData={mapperHandler(res?.data)}
           />

@@ -7,6 +7,7 @@ import { getAppliers } from "../../services/backend/PostController";
 import { useNavigation } from "@react-navigation/native";
 import { AppLoading } from "../../components/AppLoading";
 import { ErrorContext } from "../../containers/ErrorProvider/ErrorProvider";
+import { NotificationContext } from "../../containers/NotificationProvider/NotificationProvider";
 
 const MyPickerPostList = () => {
   const route = useRoute();
@@ -30,6 +31,12 @@ const MyPickerPostList = () => {
     return res.data;
   });
 
+  const { notification } = useContext(NotificationContext);
+
+  useEffect(() => {
+    refetch();
+  }, [notification]);
+
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       refetch();
@@ -46,6 +53,8 @@ const MyPickerPostList = () => {
     });
     navigation.goBack();
   }
+
+  if (isLoading) return <AppLoading />;
 
   return (
     <Box h="full" w="full" px="3" pt="5" pb="10">

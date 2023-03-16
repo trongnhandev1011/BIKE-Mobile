@@ -21,7 +21,7 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
         shadow="2"
       >
         <Flex direction="row">
-          <Box>
+          <Flex alignItems="center">
             <Avatar backgroundColor="#33B565">
               <MaterialCommunityIcons
                 name={
@@ -33,8 +33,10 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
                 color="white"
               />
             </Avatar>
-            <Text style={{ textAlign: "center" }}>ID: {tripData.id}</Text>
-          </Box>
+            <Text mt="1" color="green.800" fontWeight="semibold" fontSize="md">
+              {tripData.id}
+            </Text>
+          </Flex>
           <Box marginLeft={4} w="4/5">
             <DescriptionLine
               fontWeight="semibold"

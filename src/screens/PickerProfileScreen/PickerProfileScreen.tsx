@@ -48,7 +48,7 @@ const PickerProfileScreen = () => {
       } else {
         const { data: result } = await rejectAppliers(postId, user.id);
         if (result.data.success) {
-          navigation.navigate("MyPostListScreen" as never);
+          navigation.goBack();
         }
       }
     } catch (err) {
@@ -69,7 +69,7 @@ const PickerProfileScreen = () => {
           rounded="full"
         />
       </Center>
-      <View backgroundColor="white" p="4" rounded="lg" mt="10">
+      <View backgroundColor="white" shadow="2" p="4" rounded="lg" mt="10">
         <Text fontSize="xl" bold mb="2">
           Picker information
         </Text>

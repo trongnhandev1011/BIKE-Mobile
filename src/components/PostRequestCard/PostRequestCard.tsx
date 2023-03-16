@@ -31,6 +31,7 @@ const PostRequestCard = ({ user, navigate }: PostRequestCardProps) => {
     <Pressable onPress={() => navigate()}>
       <HStack
         backgroundColor="white"
+        shadow="2"
         p="4"
         mt="3"
         rounded="lg"

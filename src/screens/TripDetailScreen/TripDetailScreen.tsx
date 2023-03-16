@@ -38,7 +38,6 @@ export default function TripDetailScreen() {
     error,
   } = useQuery(["tripDetail", tripId], async () => {
     const res = (await getTripDetailAPI(tripId)).data;
-    console.log(res);
     if (res.code !== 0) {
       throw res;
     }

@@ -19,7 +19,13 @@ import { ErrorProvider } from "./containers/ErrorProvider";
 
 export type Props = {};
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchInterval: 10000,
+    },
+  },
+});
 
 const App: React.FC<Props> = () => {
   return (

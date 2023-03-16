@@ -80,7 +80,9 @@ export const TripActionForPassenger = ({
               refetchData();
             }}
           />
-          <Button {...props}>Give feedback</Button>
+          <Button {...props} backgroundColor="green.700">
+            Give feedback
+          </Button>
         </>
       );
       break;
@@ -88,12 +90,17 @@ export const TripActionForPassenger = ({
       action = updateStatus(tripData.id, "START");
       Component = (props: any) => (
         <VStack space={4}>
-          <Button rounded="full" onPress={updateStatus(tripData.id, "START")}>
+          <Button
+            backgroundColor="green.700"
+            rounded="full"
+            onPress={updateStatus(tripData.id, "START")}
+          >
             Start trip
           </Button>
           <Button
             rounded="full"
             variant="outline"
+            borderColor="green.700"
             onPress={updateStatus(tripData.id, "CANCEL")}
           >
             Cancel trip
@@ -103,7 +110,11 @@ export const TripActionForPassenger = ({
       break;
     case "ON_GOING":
       action = updateStatus(tripData.id, "FINISH");
-      Component = (props: any) => <Button {...props}>End trip</Button>;
+      Component = (props: any) => (
+        <Button {...props} backgroundColor="green.700">
+          End trip
+        </Button>
+      );
       break;
   }
 
@@ -146,12 +157,17 @@ export const TripActionForBiker = ({
       action = updateStatus(tripData.id, "START");
       Component = (props: any) => (
         <VStack space={4}>
-          <Button rounded="full" onPress={updateStatus(tripData.id, "START")}>
+          <Button
+            backgroundColor="green.700"
+            rounded="full"
+            onPress={updateStatus(tripData.id, "START")}
+          >
             Start trip
           </Button>
           <Button
             rounded="full"
             variant="outline"
+            borderColor="green.700"
             onPress={updateStatus(tripData.id, "CANCEL")}
           >
             Cancel trip
@@ -161,7 +177,11 @@ export const TripActionForBiker = ({
       break;
     case "ON_GOING":
       action = updateStatus(tripData.id, "FINISH");
-      Component = (props: any) => <Button {...props}>End trip</Button>;
+      Component = (props: any) => (
+        <Button {...props} backgroundColor="green.700">
+          End trip
+        </Button>
+      );
       break;
   }
 
