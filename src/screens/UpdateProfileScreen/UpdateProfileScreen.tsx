@@ -173,7 +173,7 @@ const UpdateProfileScreen = () => {
           </VStack>
         </View>
         <Button
-          mt="4"
+          mt="6"
           isLoading={loading}
           onPress={() => updateUserProfile()}
           rounded="full"
@@ -217,7 +217,7 @@ const UpdateImage = ({
   return (
     <>
       <View style={{ flex: 1, justifyContent: "center" }}>
-        <Flex>
+        <Flex alignItems={image ?? initalImage ? "center" : "start"}>
           {image && (
             <Box mr="4">
               <Image
