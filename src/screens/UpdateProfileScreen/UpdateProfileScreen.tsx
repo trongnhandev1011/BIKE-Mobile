@@ -166,7 +166,7 @@ const UpdateProfileScreen = () => {
                 },
               ].map((item, idx) => (
                 <Flex key={idx}>
-                  <Text bold fontSize="md" mb="2">
+                  <Text bold fontSize="md" mb="4">
                     {item.label}
                     {": "}
                   </Text>
@@ -234,7 +234,8 @@ const UpdateImage = ({
             </Box>
           ) : null}
           <Button
-            mt="2"
+            mt="4"
+            mb="4"
             backgroundColor="green.700"
             h="10"
             w="32"
