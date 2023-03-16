@@ -109,6 +109,7 @@ export default function MyTripListScreen() {
 
   const mapperHandler = (data: SimpleTrip) => {
     return {
+      id: data.id,
       toLocation: data.startStation,
       fromLocation: data.endStation,
       role: data.passengerId === user?.id ? "PASSENGER" : "GRABBER",

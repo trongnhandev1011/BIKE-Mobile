@@ -1,10 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Pressable } from "react-native";
-import { Avatar, Box, Flex, Text, TextArea } from "native-base";
+import { Avatar, Box, Flex, Text } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { SimpleTrip } from "../../services/backend/TripsController/type";
 import { DescriptionLine } from "../DescriptionLine";
-import { UserRoleConstants } from "../../constants/UserRoleConstants";
 
 export type Props = {
   tripData: any;
@@ -35,6 +33,7 @@ const TripRequestCard: React.FC<Props> = ({ tripData, onPress }) => {
                 color="white"
               />
             </Avatar>
+            <Text style={{ textAlign: "center" }}>ID: {tripData.id}</Text>
           </Box>
           <Box marginLeft={4} w="4/5">
             <DescriptionLine
