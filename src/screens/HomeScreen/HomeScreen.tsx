@@ -89,12 +89,11 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
       </Box>
       {postData?.items?.length !== 0 ? (
         <>
-          {" "}
           <Text mt="6" fontWeight="bold">
             Your public post
           </Text>
           <Box mt="4" ml="4" mb="24">
-            <HomeCardContainer postData={postData?.items} />
+            <HomeCardContainer postData={postData?.items ?? []} />
           </Box>
         </>
       ) : null}
