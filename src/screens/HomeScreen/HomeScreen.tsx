@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { Box, ScrollView, Text, Flex, HStack } from "native-base";
+import { Box, ScrollView, Text, Flex, HStack, VStack } from "native-base";
 import React, { useContext, useEffect } from "react";
 import { HomeHeaderContainer } from "../../containers/HomeHeader";
 import { CardActionComponent } from "../../components/CardAction";
@@ -14,8 +14,42 @@ import HomeCardContainer from "../../containers/HomeCardContainer/HomeCardContai
 import { NotificationContext } from "../../containers/NotificationProvider/NotificationProvider";
 import useAuth from "../../hooks/useAuth";
 import { Rating } from "react-native-ratings";
+import { Image } from "react-native";
 
 export type HomeScreenProps = {};
+
+export const getRatingEmoji = (rating: number) => {
+  if (0 < rating && rating <= 1) {
+    return {
+      text: "Everything will be okay!",
+      imageUrl: require("../../image/cry.png"),
+    };
+  }
+  if (1 < rating && rating <= 2) {
+    return {
+      text: "Try your best!",
+      imageUrl: require("../../image/sad.png"),
+    };
+  }
+  if (2 < rating && rating <= 3) {
+    return {
+      text: "We believe you could do better!",
+      imageUrl: require("../../image/neutral.png"),
+    };
+  }
+  if (3 < rating && rating <= 4) {
+    return {
+      text: "Great effort!",
+      imageUrl: require("../../image/happy.png"),
+    };
+  }
+  if (4 < rating && rating <= 5) {
+    return {
+      text: "Excellent! Keep going!",
+      imageUrl: require("../../image/love.png"),
+    };
+  }
+};
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
   const navigation = useNavigation();
@@ -63,15 +97,30 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
         Your total rating
       </Text>
       <Box
-        style={{ padding: 10, borderRadius: 5 }}
+        style={{ padding: 10, borderRadius: 5, marginBottom: 40 }}
         mt={2}
         mb={10}
         backgroundColor="white"
       >
         {user.averagePoint != null ? (
-          <Rating startingValue={user.averagePoint} ratingCount={5} readonly />
+          <VStack>
+            <Rating startingValue={user.rating} ratingCount={5} readonly />
+            <HStack mt={3} alignItems="center" justifyContent="center">
+              <Text>{getRatingEmoji(user.rating)?.text}</Text>
+              <Image
+                style={{ marginLeft: 10, width: 30, height: 30 }}
+                source={getRatingEmoji(user.rating)?.imageUrl}
+              />
+            </HStack>
+          </VStack>
         ) : (
-          <Text>You haven't received any rating yet!</Text>
+          <HStack alignItems="center" justifyContent="center">
+            <Text>You haven't received any rating yet!</Text>
+            <Image
+              style={{ marginLeft: 10, width: 30, height: 30 }}
+              source={require("../../image/sleep.png")}
+            />
+          </HStack>
         )}
       </Box>
     </ScrollView>
