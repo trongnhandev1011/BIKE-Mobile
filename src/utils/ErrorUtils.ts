@@ -1,5 +1,6 @@
 export const getApiErrorMessage = (errorCode: number, errorMsg: string) => {
   switch (errorCode) {
+    case -2:
     case -3:
     case 20:
     case 22:
