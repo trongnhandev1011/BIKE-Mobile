@@ -53,6 +53,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
           code: -2,
           message: "Please use an .fpt.edu.vn account for login",
         });
+        return;
       }
       //TODO: will get the auth code to send to the server later
       login({ authCode: params.code });
