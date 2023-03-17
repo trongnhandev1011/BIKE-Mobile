@@ -47,17 +47,24 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
   useEffect(() => {
     if (response?.type === "success") {
       const { authentication, params } = response;
-      console.log(response);
+      console.log(response.params.hd);
+      if (response?.params?.hd !== "fpt.edu.vn") {
+        setErrorMsg({
+          code: -2,
+          message: "Please use an .fpt.edu.vn account for login",
+        });
+      }
       //TODO: will get the auth code to send to the server later
       login({ authCode: params.code });
     }
   }, [response]);
 
   useEffect(() => {
+    console.log(error);
     if (code === "ERROR") {
       setErrorMsg({
-        code: -1,
-        message: "Login failed",
+        code: -3,
+        message: "Login failed! Please try again later!",
       });
     }
   }, [code]);

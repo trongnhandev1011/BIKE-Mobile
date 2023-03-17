@@ -47,9 +47,12 @@ export const login = createAsyncThunk<{ user: object }, { authCode: string }>(
   async ({ authCode }, thunkAPI) => {
     try {
       const {
-        data: { data },
+        data: { code, data, message },
       } = await loginAPI({ code: authCode });
-      console.log(data);
+
+      if (code !== 0) {
+        throw { code, message };
+      }
       setAuthToken(data.token);
       await SecureStore.setItemAsync(
         StoreKeyConstants.TOKEN as string,
